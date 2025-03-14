@@ -1,10 +1,12 @@
 package org.bigcraft.infpoints;
 
+import com.google.gson.GsonBuilder;
 import com.google.inject.*;
 import me.wyne.wutils.config.Config;
 import me.wyne.wutils.i18n.I18n;
 import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
 import me.wyne.wutils.i18n.language.validation.EmptyValidator;
+import me.wyne.wutils.json.JsonRegistry;
 import me.wyne.wutils.log.BasicLogConfig;
 import me.wyne.wutils.log.ConfigurableLogConfig;
 import me.wyne.wutils.log.Log;
@@ -26,6 +28,7 @@ public class InfPoints extends JavaPlugin {
         saveDefaultConfig();
         getConfig().setDefaults(new MemoryConfiguration());
 
+        initializeJson();
         initializeLogger();
         initializeI18n();
 
@@ -47,9 +50,15 @@ public class InfPoints extends JavaPlugin {
         try {
             injector.getInstance(PointManager.class).loadPoints();
             injector.getInstance(PointManager.class).registerPermissions();
+            JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
             Log.global.exception("Guice configuration/provision exception", e);
         }
+    }
+
+    @Override
+    public void onDisable() {
+        JsonRegistry.global.write();
     }
 
     private void initializeLogger()
@@ -82,6 +91,12 @@ public class InfPoints extends JavaPlugin {
         I18n.global.setDefaultLanguage(I18n.global.getDefaultLanguageCode(this));
         I18n.global.setComponentInterpreter(ComponentInterpreters.valueOf(getConfig().getString("serializer", "LEGACY")).get(new EmptyValidator()));
         I18n.global.setUsePlayerLanguage(getConfig().getBoolean("usePlayerLanguage", true));
+    }
+
+    private void initializeJson()
+    {
+        JsonRegistry.global.setGson(new GsonBuilder().setPrettyPrinting().create());
+        JsonRegistry.global.setDirectory(getDataFolder());
     }
 
     public void reload()

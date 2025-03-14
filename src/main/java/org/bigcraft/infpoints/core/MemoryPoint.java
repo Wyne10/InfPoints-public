@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public class MemoryPoint extends Point {
 
-    private final Map<UUID, Integer> balance = new HashMap<>();
+    private Map<UUID, Integer> balance = new HashMap<>();
 
     public MemoryPoint(ConfigurationSection config) {
         super(config);
