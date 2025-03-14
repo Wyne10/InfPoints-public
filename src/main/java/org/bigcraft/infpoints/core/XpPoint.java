@@ -1,22 +1,23 @@
 package org.bigcraft.infpoints.core;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
-public class MemoryPoint extends Point {
+public class XpPoint extends Point {
 
-    private Map<UUID, Integer> balance = new HashMap<>();
-
-    public MemoryPoint(ConfigurationSection config) {
+    public XpPoint(ConfigurationSection config) {
         super(config);
     }
 
     @Override
     public int get(UUID player) {
-        return balance.getOrDefault(player, 0);
+        return getPlayer(player)
+                .map(Player::getLevel)
+                .orElse(0);
     }
 
     @Override
@@ -34,7 +35,11 @@ public class MemoryPoint extends Point {
 
     @Override
     public void set(UUID player, int amount) {
-        balance.put(player, amount);
+        if (amount < 0)
+            amount = 0;
+        int finalAmount = amount;
+        getPlayer(player)
+                .ifPresent(player1 -> player1.setLevel(finalAmount));
     }
 
     @Override
@@ -43,6 +48,10 @@ public class MemoryPoint extends Point {
             return false;
         add(receiver, amount);
         return true;
+    }
+
+    private Optional<Player> getPlayer(UUID uuid) {
+        return Optional.ofNullable(Bukkit.getPlayer(uuid));
     }
 
 }
