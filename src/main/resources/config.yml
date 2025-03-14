@@ -1,0 +1,5 @@
+regenerate: true
+lang: 'en.yml'
+usePlayerLanguage: true
+# LEGACY/ENHANCED_LEGACY/MINI_MESSAGE
+serializer: LEGACY
