@@ -1,0 +1,11 @@
+### Messages
+
+## Info
+info-point-balance: "&aYou have %points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "&aPlayer '%player_name%' have %points_<key>_balance%%points_<key>_symbol%"
+
+## Error
+error-point-not-found: "&cPoint '<key>' doesn't exist!"
+
+## Success
+success-plugin-reloaded: "&aPlugin reloaded!"

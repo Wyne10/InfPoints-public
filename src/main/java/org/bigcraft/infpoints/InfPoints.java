@@ -8,9 +8,8 @@ import me.wyne.wutils.i18n.language.validation.EmptyValidator;
 import me.wyne.wutils.log.BasicLogConfig;
 import me.wyne.wutils.log.ConfigurableLogConfig;
 import me.wyne.wutils.log.Log;
-import org.bigcraft.infpoints.module.CommandModule;
-import org.bigcraft.infpoints.module.PluginModule;
-import org.bigcraft.infpoints.module.PlaceholderModule;
+import org.bigcraft.infpoints.core.PointManager;
+import org.bigcraft.infpoints.module.*;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,6 +33,8 @@ public class InfPoints extends JavaPlugin {
             injector =  Guice.createInjector(
                     Stage.PRODUCTION,
                     new PluginModule(this),
+                    new CoreModule(),
+                    new PointTypeModule(),
                     new PlaceholderModule(),
                     new CommandModule()
             );
@@ -44,7 +45,7 @@ public class InfPoints extends JavaPlugin {
         initializeConfig();
 
         try {
-            // TODO Start model
+            injector.getInstance(PointManager.class).loadPoints();
         } catch (ConfigurationException | ProvisionException e) {
             Log.global.exception("Guice configuration/provision exception", e);
         }

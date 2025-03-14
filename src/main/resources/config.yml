@@ -3,3 +3,16 @@ lang: 'en.yml'
 usePlayerLanguage: true
 # LEGACY/ENHANCED_LEGACY/MINI_MESSAGE
 serializer: LEGACY
+
+points:
+  primary:
+    type: MEMORY
+    canPay: true
+    canCheckBalance: true
+    name: 'Монета'
+    namePlural: 'Монеты'
+    symbol: '🪙'
+    payCommand: 'pay'
+    payAliases: []
+    balanceCommand: 'balance'
+    balanceAliases: []

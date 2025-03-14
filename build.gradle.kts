@@ -15,6 +15,7 @@ dependencies {
     compileOnly(libs.placeholderApi)
     compileOnly(libs.commandApi)
 
+    implementation(project(":api"))
     implementation(libs.guice)
 
     implementation(libs.wutilsConfig)

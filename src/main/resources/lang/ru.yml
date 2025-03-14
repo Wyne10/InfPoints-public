@@ -1,0 +1,11 @@
+### Messages
+
+## Info
+info-point-balance: "&aУ вас есть %points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "&aИгрок '%player_name%' имеет %points_<key>_balance%%points_<key>_symbol%"
+
+## Error
+error-point-not-found: "&cПоинт '<key>' не существует!"
+
+## Success
+success-plugin-reloaded: "&aПлагин перезагружен!"
