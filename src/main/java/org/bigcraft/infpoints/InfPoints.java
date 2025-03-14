@@ -46,6 +46,7 @@ public class InfPoints extends JavaPlugin {
 
         try {
             injector.getInstance(PointManager.class).loadPoints();
+            injector.getInstance(PointManager.class).registerPermissions();
         } catch (ConfigurationException | ProvisionException e) {
             Log.global.exception("Guice configuration/provision exception", e);
         }
@@ -90,7 +91,7 @@ public class InfPoints extends JavaPlugin {
         Config.global.reloadConfig(getConfig());
         initializeI18n();
         try {
-            // TODO Reload model
+            injector.getInstance(PointManager.class).loadPoints();
         } catch (ConfigurationException | ProvisionException e) {
             Log.global.exception("Guice configuration/provision exception", e);
         }

@@ -7,8 +7,6 @@ serializer: LEGACY
 points:
   primary:
     type: MEMORY
-    canPay: true
-    canCheckBalance: true
     name: 'Монета'
     namePlural: 'Монеты'
     symbol: '🪙'
