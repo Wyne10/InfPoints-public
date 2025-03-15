@@ -3,14 +3,17 @@ package org.bigcraft.infpoints.core;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.command.BalanceCommand;
 import org.bigcraft.infpoints.command.PayCommand;
 import org.bigcraft.infpoints.command.PersonalCommand;
 import org.bigcraft.infpoints.core.factory.PointFactory;
+import org.bigcraft.infpoints.vault.VaultEconomy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.ServicePriority;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -58,6 +61,11 @@ public class PointManager {
                 Bukkit.getPluginManager().addPermission(new Permission(permission + key));
             }
         });
+    }
+
+    public void implementVault() {
+        if (plugin.getConfig().getBoolean("implementVault") && points.containsKey(plugin.getConfig().getString("vault")))
+            Bukkit.getServicesManager().register(Economy.class, new VaultEconomy(points.get(plugin.getConfig().getString("vault"))), plugin, ServicePriority.Normal);
     }
 
 }

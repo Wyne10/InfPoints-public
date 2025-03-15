@@ -16,6 +16,7 @@ dependencies {
     compileOnly(libs.paperApi)
     compileOnly(libs.placeholderApi)
     compileOnly(libs.commandApi)
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     implementation(project(":api"))
     implementation(libs.guice)
@@ -71,7 +72,7 @@ bukkit {
     author = findProperty("author").toString()
     main = "org.bigcraft.infpoints.InfPoints"
     apiVersion = "1.16"
-    softDepend = listOf("PlaceholderAPI", "CommandAPI")
+    softDepend = listOf("PlaceholderAPI", "CommandAPI", "Vault")
     permissions {
         register("points.balance.*") {
             default = BukkitPluginDescription.Permission.Default.OP

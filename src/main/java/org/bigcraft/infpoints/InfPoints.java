@@ -50,6 +50,7 @@ public class InfPoints extends JavaPlugin {
         try {
             injector.getInstance(PointManager.class).loadPoints();
             injector.getInstance(PointManager.class).registerPermissions();
+            injector.getInstance(PointManager.class).implementVault();
             JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
             Log.global.exception("Guice configuration/provision exception", e);
