@@ -1,4 +1,8 @@
 ### Messages
+# Название монеты - %points_<key>_name%
+# Название монеты в множественном числе - %points_<key>_name-plural%
+# Символ монеты - %points_<key>_symbol%
+# Баланс - %points_<key>_balance%
 
 ## Info
 info-point-balance: "&aУ вас есть %points_<key>_balance%%points_<key>_symbol%"

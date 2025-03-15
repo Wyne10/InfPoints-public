@@ -9,11 +9,30 @@ vault: primary
 
 points:
   primary:
-    type: SQL
+    # Обязательный параметр. Тип поинта. Доступные варианты:
+    # MEMORY - Сохранение в памяти (Очищается после перезагрузки плагина)
+    # JSON - Сохранение в JSON
+    # PDC - Сохранение в PersistentDataContainer игрока
+    # XP - Сохранение в уровень опыта игрока (Поинт такого типа может быть только один)
+    # SQL - Сохранение в SQL
+    type: MEMORY
+
+    # Название монеты %points_<key>_name%
     name: 'Монета'
+
+    # Название монеты в множественном числе %points_<key>_name-plural%
     namePlural: 'Монеты'
+
+    # Символ монеты %points_<key>_symbol%
     symbol: '🪙'
+
+    # Личные команды для этой монеты, оставьте параметры пустыми или удалите, чтобы не использовать команды
     payCommand: 'pay'
     payAliases: []
     balanceCommand: 'balance'
     balanceAliases: []
+  xp:
+    type: XP
+    name: 'Ур. опыта'
+    namePlural: 'Ур. опыта'
+    symbol: 'Ур. опыта'

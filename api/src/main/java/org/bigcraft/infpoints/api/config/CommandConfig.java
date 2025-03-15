@@ -14,4 +14,12 @@ public record CommandConfig(String payCommand, List<String> payAliases, String b
         return new CommandConfig(payCommand, payAliases, balanceCommand, balanceAliases);
     }
 
+    public boolean usePayCommand() {
+        return payCommand != null && !payCommand.isEmpty();
+    }
+
+    public boolean useBalanceCommand() {
+        return balanceCommand != null && !balanceCommand.isEmpty();
+    }
+
 }
