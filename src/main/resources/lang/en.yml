@@ -1,3 +1,9 @@
+### Placeholders
+# Название монеты - %points_<key>_name%
+# Название монеты в множественном числе - %points_<key>_name-plural%
+# Символ монеты - %points_<key>_symbol%
+# Баланс - %points_<key>_balance%
+
 ### Messages
 
 ## Info

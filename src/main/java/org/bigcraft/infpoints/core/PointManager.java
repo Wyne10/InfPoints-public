@@ -64,9 +64,9 @@ public class PointManager implements PointProvider {
                 throw new IllegalArgumentException("Unknown point type " + type);
             Point point = pointTypeMap.get(type).create(pointConfig);
             points.put(pointKey, point);
-            if (point.getCommandConfig().payCommand() != null)
+            if (point.getCommandConfig().usePayCommand())
                 personalCommands.add(new PayCommand(points.get(pointKey)));
-            if (point.getCommandConfig().balanceCommand() != null)
+            if (point.getCommandConfig().useBalanceCommand())
                 personalCommands.add(new BalanceCommand(points.get(pointKey)));
         }
     }
