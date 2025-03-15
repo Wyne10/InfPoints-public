@@ -2,16 +2,21 @@ package org.bigcraft.infpoints;
 
 import com.google.gson.GsonBuilder;
 import com.google.inject.*;
+import com.j256.ormlite.logger.Level;
+import com.j256.ormlite.logger.Logger;
 import me.wyne.wutils.config.Config;
 import me.wyne.wutils.i18n.I18n;
 import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
 import me.wyne.wutils.i18n.language.validation.EmptyValidator;
+import me.wyne.wutils.jdbc.DriverLibrary;
 import me.wyne.wutils.json.JsonRegistry;
 import me.wyne.wutils.log.BasicLogConfig;
 import me.wyne.wutils.log.ConfigurableLogConfig;
 import me.wyne.wutils.log.Log;
+import org.bigcraft.infpoints.config.SqlConfig;
 import org.bigcraft.infpoints.core.PointManager;
 import org.bigcraft.infpoints.module.*;
+import org.bigcraft.infpoints.sql.ConnectionProvider;
 import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -32,11 +37,14 @@ public class InfPoints extends JavaPlugin {
         initializeLogger();
         initializeI18n();
 
+        Logger.setGlobalLogLevel(Level.INFO);
+
         try {
             injector =  Guice.createInjector(
                     Stage.PRODUCTION,
                     new PluginModule(this),
                     new CoreModule(),
+                    new ConfigModule(),
                     new PointTypeModule(),
                     new PlaceholderModule(),
                     new CommandModule()
@@ -59,7 +67,12 @@ public class InfPoints extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        JsonRegistry.global.write();
+        try {
+            injector.getInstance(ConnectionProvider.class).close();
+            JsonRegistry.global.write();
+        } catch (ConfigurationException | ProvisionException e) {
+            Log.global.exception("Guice configuration/provision exception", e);
+        }
     }
 
     private void initializeLogger()
@@ -107,6 +120,8 @@ public class InfPoints extends JavaPlugin {
         Config.global.reloadConfig(getConfig());
         initializeI18n();
         try {
+            DriverLibrary.valueOf(injector.getInstance(SqlConfig.class).getDriver()).registerDriver();
+            injector.getInstance(ConnectionProvider.class).reloadConnectionPool();
             injector.getInstance(PointManager.class).loadPoints();
         } catch (ConfigurationException | ProvisionException e) {
             Log.global.exception("Guice configuration/provision exception", e);

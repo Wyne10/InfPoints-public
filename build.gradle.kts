@@ -16,10 +16,12 @@ dependencies {
     compileOnly(libs.paperApi)
     compileOnly(libs.placeholderApi)
     compileOnly(libs.commandApi)
+    //compileOnly("org.apache.logging.log4j:log4j-core:2.24.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     implementation(project(":api"))
     implementation(libs.guice)
+    implementation(libs.ormLiteJdbc)
 
     implementation(libs.wutilsConfig)
     implementation(libs.wutilsConfigugrables)
@@ -36,6 +38,7 @@ tasks {
         minimize()
         relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
         relocate("com.google.common", "org.bigcraft.infpoints.shadow.google.common")
+        relocate("com.j256.ormlite", "org.bigcraft.infpoints.shadow.j256.ormlite")
         relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")
     }
 

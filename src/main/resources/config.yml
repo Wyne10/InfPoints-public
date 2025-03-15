@@ -9,7 +9,7 @@ vault: primary
 
 points:
   primary:
-    type: MEMORY
+    type: SQL
     name: 'Монета'
     namePlural: 'Монеты'
     symbol: '🪙'

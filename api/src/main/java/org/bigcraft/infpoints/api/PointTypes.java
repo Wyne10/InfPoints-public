@@ -4,5 +4,6 @@ public enum PointTypes {
     MEMORY,
     JSON,
     PDC,
-    XP
+    XP,
+    SQL
 }
