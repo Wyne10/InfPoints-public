@@ -16,7 +16,6 @@ dependencies {
     compileOnly(libs.paperApi)
     compileOnly(libs.placeholderApi)
     compileOnly(libs.commandApi)
-    //compileOnly("org.apache.logging.log4j:log4j-core:2.24.1")
     compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     implementation(project(":api"))

@@ -47,7 +47,8 @@ public class InfPoints extends JavaPlugin {
                     new ConfigModule(),
                     new PointTypeModule(),
                     new PlaceholderModule(),
-                    new CommandModule()
+                    new CommandModule(),
+                    new ApiModule()
             );
         } catch (CreationException e) {
             Log.global.exception("Guice injector creation exception", e);

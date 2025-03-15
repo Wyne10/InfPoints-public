@@ -9,7 +9,7 @@ public class JsonPoint extends MemoryPoint {
     public JsonPoint(ConfigurationSection config) {
         super(config);
         try {
-            JsonRegistry.global.register(this, MemoryPoint.class.getDeclaredField("balance"), "data/" + config.getName() + ".json");
+            JsonRegistry.global.register(this, MemoryPoint.class.getDeclaredField("balance"), "data/" + getConfig().key() + ".json");
         } catch (NoSuchFieldException e) {
             Log.global.exception("An exception occurred trying to register json point", e);
         }

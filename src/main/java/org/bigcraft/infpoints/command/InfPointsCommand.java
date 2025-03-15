@@ -104,6 +104,7 @@ public class InfPointsCommand {
                                                         ));
                                         })))))
                 .then(new LiteralArgument("reload")
+                        .withPermission("points.admin.reload")
                         .executes((sender, args) -> {
                             plugin.reload();
                             sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "success-plugin-reload"));
