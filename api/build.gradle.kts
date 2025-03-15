@@ -31,7 +31,7 @@ publishing {
         create<MavenPublication>("maven") {
             groupId = findProperty("group").toString()
             artifactId = "InfPoints-api"
-            version = findProperty("pluginVersion").toString()
+            version = findProperty("version").toString()
 
             from(components["java"])
         }

@@ -5,6 +5,9 @@ import com.google.inject.Singleton;
 import lombok.Getter;
 import net.milkbowl.vault.economy.Economy;
 import org.bigcraft.infpoints.InfPoints;
+import org.bigcraft.infpoints.api.PointConfig;
+import org.bigcraft.infpoints.api.PointProvider;
+import org.bigcraft.infpoints.api.PointType;
 import org.bigcraft.infpoints.command.BalanceCommand;
 import org.bigcraft.infpoints.command.PayCommand;
 import org.bigcraft.infpoints.command.PersonalCommand;
@@ -14,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.ServicePriority;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Singleton
-public class PointManager {
+public class PointManager implements PointProvider {
 
     private final static String[] permissions = {"points.balance.", "points.balance-other.", "points.set.", "points.add.", "points.sub.", "points.pay."};
 
@@ -35,6 +39,18 @@ public class PointManager {
     public PointManager(InfPoints plugin, Map<String, PointFactory> pointTypeMap) {
         this.plugin = plugin;
         this.pointTypeMap = pointTypeMap;
+    }
+
+    @Override
+    @Nullable
+    public PointType getPoint(String key) {
+        return points.get(key);
+    }
+
+    @Override
+    @Nullable
+    public PointConfig getPointConfig(String key) {
+        return points.get(key);
     }
 
     public void loadPoints() {
@@ -64,7 +80,7 @@ public class PointManager {
     }
 
     public void implementVault() {
-        if (plugin.getConfig().getBoolean("implementVault") && points.containsKey(plugin.getConfig().getString("vault")))
+        if (plugin.getConfig().getBoolean("implementVault") && points.containsKey(plugin.getConfig().getString("vault", "")))
             Bukkit.getServicesManager().register(Economy.class, new VaultEconomy(points.get(plugin.getConfig().getString("vault"))), plugin, ServicePriority.Normal);
     }
 
