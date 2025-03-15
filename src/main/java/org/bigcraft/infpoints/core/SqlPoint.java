@@ -29,38 +29,38 @@ public class SqlPoint extends Point {
     }
 
     @Override
-    public int get(UUID player) {
+    public long get(UUID player) {
         return getEntity(player)
                 .map(PointEntity::getBalance)
-                .orElse(0);
+                .orElse(getConfig().defaultBalance());
     }
 
     @Override
-    public void add(UUID player, int amount) {
+    public void add(UUID player, long amount) {
         getEntity(player)
                 .ifPresentOrElse(entity -> update(entity, entity.getBalance() + amount),
-                        () -> create(player, amount));
+                        () -> create(player, getConfig().defaultBalance() + amount));
     }
 
     @Override
-    public boolean subtract(UUID player, int amount) {
+    public boolean subtract(UUID player, long amount) {
         if (get(player) < amount)
             return false;
         getEntity(player)
                 .ifPresentOrElse(entity -> update(entity, entity.getBalance() - amount),
-                        () -> create(player, -amount));
+                        () -> create(player, getConfig().defaultBalance() - amount));
         return true;
     }
 
     @Override
-    public void set(UUID player, int amount) {
+    public void set(UUID player, long amount) {
         getEntity(player)
                 .ifPresentOrElse(entity -> update(entity, amount),
                         () -> create(player, amount));
     }
 
     @Override
-    public boolean transfer(UUID sender, UUID receiver, int amount) {
+    public boolean transfer(UUID sender, UUID receiver, long amount) {
         if (!subtract(sender, amount))
             return false;
         add(receiver, amount);
@@ -76,7 +76,7 @@ public class SqlPoint extends Point {
         return Optional.empty();
     }
 
-    private void create(UUID player, int balance) {
+    private void create(UUID player, long balance) {
         try {
             pointDao.create(new PointEntity(player, balance));
         } catch (SQLException e) {
@@ -84,7 +84,7 @@ public class SqlPoint extends Point {
         }
     }
 
-    private void update(PointEntity entity, int balance) {
+    private void update(PointEntity entity, long balance) {
         try {
             pointDao.update(entity.setBalance(balance));
         } catch (SQLException e) {

@@ -73,10 +73,22 @@ public class PointsPlaceholders extends PlaceholderExpansion {
             case "name-plural": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().pluralName()));
             case "symbol": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().symbol()));
             case "balance": return String.valueOf(point.get(player.getUniqueId()));
+            case "balance-format": return formatNumber(String.valueOf(point.get(player.getUniqueId())));
         }
 
         Log.global.error("Data " + data + " not found");
         return null;
+    }
+
+    private String formatNumber(String number) {
+        StringBuilder sb = new StringBuilder(number);
+        int length = sb.length();
+
+        for (int i = length - 3; i > 0; i -= 3) {
+            sb.insert(i, ",");
+        }
+
+        return sb.toString();
     }
 
     static class Args {

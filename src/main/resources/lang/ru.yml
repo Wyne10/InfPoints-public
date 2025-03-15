@@ -7,10 +7,13 @@
 ## Info
 info-point-balance: "&aУ вас есть %points_<key>_balance%%points_<key>_symbol%"
 info-point-balance-other: "&aИгрок '%player_name%' имеет %points_<key>_balance%%points_<key>_symbol%"
+info-help:
+  - "Help"
 
 ## Error
 error-point-not-found: "&cПоинт '<key>' не существует!"
-error-insufficient-balance: "&cНедостаточно средств!"
+error-insufficient-funds: "&cНедостаточно средств!"
+error-pay-self: "&cНельзя перевести себе!"
 error-permissions: "&cНедостаточно прав для исполнения этой команды!"
 
 ## Success
