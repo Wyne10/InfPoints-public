@@ -19,20 +19,20 @@ public class PdcPoint extends Point {
     }
 
     @Override
-    public int get(UUID player) {
+    public long get(UUID player) {
         return getData(player)
-                .map(data -> data.getOrDefault(key, PersistentDataType.INTEGER, 0))
-                .orElse(0);
+                .map(data -> data.getOrDefault(key, PersistentDataType.LONG, 0L))
+                .orElse(getConfig().defaultBalance());
     }
 
     @Override
-    public void add(UUID player, int amount) {
+    public void add(UUID player, long amount) {
         getData(player)
                 .ifPresent(data -> set(player, get(player) + amount));
     }
 
     @Override
-    public boolean subtract(UUID player, int amount) {
+    public boolean subtract(UUID player, long amount) {
         if (get(player) < amount)
             return false;
         getData(player)
@@ -41,13 +41,13 @@ public class PdcPoint extends Point {
     }
 
     @Override
-    public void set(UUID player, int amount) {
+    public void set(UUID player, long amount) {
         getData(player)
-                .ifPresent(data -> data.set(key, PersistentDataType.INTEGER, amount));
+                .ifPresent(data -> data.set(key, PersistentDataType.LONG, amount));
     }
 
     @Override
-    public boolean transfer(UUID sender, UUID receiver, int amount) {
+    public boolean transfer(UUID sender, UUID receiver, long amount) {
         if (!subtract(sender, amount))
             return false;
         add(receiver, amount);

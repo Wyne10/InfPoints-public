@@ -14,19 +14,19 @@ public class XpPoint extends Point {
     }
 
     @Override
-    public int get(UUID player) {
+    public long get(UUID player) {
         return getPlayer(player)
                 .map(Player::getLevel)
                 .orElse(0);
     }
 
     @Override
-    public void add(UUID player, int amount) {
+    public void add(UUID player, long amount) {
         set(player, get(player) + amount);
     }
 
     @Override
-    public boolean subtract(UUID player, int amount) {
+    public boolean subtract(UUID player, long amount) {
         if (get(player) < amount)
             return false;
         set(player, get(player) - amount);
@@ -34,16 +34,16 @@ public class XpPoint extends Point {
     }
 
     @Override
-    public void set(UUID player, int amount) {
+    public void set(UUID player, long amount) {
         if (amount < 0)
             amount = 0;
-        int finalAmount = amount;
+        int finalAmount = (int) amount;
         getPlayer(player)
                 .ifPresent(player1 -> player1.setLevel(finalAmount));
     }
 
     @Override
-    public boolean transfer(UUID sender, UUID receiver, int amount) {
+    public boolean transfer(UUID sender, UUID receiver, long amount) {
         if (!subtract(sender, amount))
             return false;
         add(receiver, amount);

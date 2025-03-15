@@ -33,9 +33,19 @@ public class InfPointsCommand {
 
     public void registerCommand() {
         new CommandTree("points")
+                .executes((sender, args) -> {
+                    sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                })
+                .then(new LiteralArgument("help")
+                        .executes((sender, args) -> {
+                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                        }))
                 .then(new StringArgument("point")
                         .replaceSuggestions(ArgumentSuggestions.stringCollection(info ->
                                 pointManager.getPoints().keySet()))
+                        .executes((sender, args) -> {
+                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                        })
                         .then(new LiteralArgument("balance")
                                 .executesPlayer((sender, args) -> {
                                     hasPermission(sender, "points.balance." + getPointKey(sender, args));
@@ -60,29 +70,61 @@ public class InfPointsCommand {
                                             ));
                                 })))
                         .then(new LiteralArgument("set")
+                                .executes((sender, args) -> {
+                                    sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                })
                                 .then(new IntegerArgument("amount")
+                                        .executes((sender, args) -> {
+                                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                        })
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.set.", "success-point-set", PointType::set);
                                                 }))))
                         .then(new LiteralArgument("add")
+                                .executes((sender, args) -> {
+                                    sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                })
                                 .then(new IntegerArgument("amount")
+                                        .executes((sender, args) -> {
+                                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                        })
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.add.", "success-point-add", PointType::add);
                                                 }))))
                         .then(new LiteralArgument("sub")
+                                .executes((sender, args) -> {
+                                    sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                })
                                 .then(new IntegerArgument("amount")
+                                        .executes((sender, args) -> {
+                                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                        })
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.sub.", "success-point-sub", (point, player, amount) -> point.set(player, point.get(player) - amount));
                                                 }))))
                         .then(new LiteralArgument("pay")
+                                .executes((sender, args) -> {
+                                    sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                })
                                 .then(new IntegerArgument("amount", 1)
+                                        .executes((sender, args) -> {
+                                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+                                        })
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executesPlayer((sender, args) -> {
                                                     hasPermission(sender, "points.pay." + getPointKey(sender, args));
                                                     Player player = args.getByClass("target", Player.class);
+                                                    if (player == sender)
+                                                        throw CommandAPIBukkit.failWithAdventureComponent(I18n.global.getPlaceholderComponent(
+                                                                sender.locale(),
+                                                                sender,
+                                                                "error-pay-self",
+                                                                Placeholder.replace("key", args.getRaw("point"))
+                                                        ));
+
                                                     int amount = args.getByClassOrDefault("amount", Integer.class, 1);
                                                     Point point = getPoint(sender, args);
                                                     boolean result = point.transfer(sender.getUniqueId(), player.getUniqueId(), amount);
@@ -90,7 +132,7 @@ public class InfPointsCommand {
                                                         sender.sendMessage(I18n.global.getPlaceholderComponent(
                                                                 sender.locale(),
                                                                 sender,
-                                                                "error-insufficient-balance",
+                                                                "error-insufficient-funds",
                                                                 Placeholder.replace("key", args.getRaw("point"))
                                                         ));
                                                     else
@@ -109,7 +151,7 @@ public class InfPointsCommand {
                             plugin.reload();
                             sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "success-plugin-reload"));
                         }))
-                .register();
+                .register(plugin);
     }
 
     private void addSetSub(CommandSender sender, CommandArguments args, String permission, String message, AddSetSub operation) throws WrapperCommandSyntaxException {

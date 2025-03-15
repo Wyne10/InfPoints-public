@@ -17,6 +17,8 @@ points:
     # SQL - Сохранение в SQL
     type: MEMORY
 
+    defaultBalance: 100
+
     # Название монеты %points_<key>_name%
     name: 'Монета'
 

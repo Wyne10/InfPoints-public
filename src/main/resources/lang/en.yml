@@ -9,10 +9,13 @@
 ## Info
 info-point-balance: "&aYou have %points_<key>_balance%%points_<key>_symbol%"
 info-point-balance-other: "&aPlayer '%player_name%' have %points_<key>_balance%%points_<key>_symbol%"
+info-help:
+  - "Help"
 
 ## Error
 error-point-not-found: "&cPoint '<key>' doesn't exist!"
-error-insufficient-balance: "&cInsufficient balance!"
+error-insufficient-funds: "&cInsufficient funds!"
+error-pay-self: "&cCan't pay to yourself!"
 error-permissions: "&cNot enough permissions to execute this command!"
 
 ## Success
@@ -21,3 +24,4 @@ success-point-set: "&aSet <amount>%points_<key>_symbol% to '<player-name>'"
 success-point-add: "&aAdded <amount>%points_<key>_symbol% to '<player-name>'"
 success-point-sub: "&aSubtracted <amount>%points_<key>_symbol% from '<player-name>'"
 success-point-pay: "&aPayed <amount>%points_<key>_symbol% to '<player-name>'"
+

@@ -8,24 +8,24 @@ import java.util.UUID;
 
 public class MemoryPoint extends Point {
 
-    private Map<UUID, Integer> balance = new HashMap<>();
+    private Map<UUID, Long> balance = new HashMap<>();
 
     public MemoryPoint(ConfigurationSection config) {
         super(config);
     }
 
     @Override
-    public int get(UUID player) {
-        return balance.getOrDefault(player, 0);
+    public long get(UUID player) {
+        return balance.getOrDefault(player, getConfig().defaultBalance());
     }
 
     @Override
-    public void add(UUID player, int amount) {
+    public void add(UUID player, long amount) {
         set(player, get(player) + amount);
     }
 
     @Override
-    public boolean subtract(UUID player, int amount) {
+    public boolean subtract(UUID player, long amount) {
         if (get(player) < amount)
             return false;
         set(player, get(player) - amount);
@@ -33,12 +33,12 @@ public class MemoryPoint extends Point {
     }
 
     @Override
-    public void set(UUID player, int amount) {
+    public void set(UUID player, long amount) {
         balance.put(player, amount);
     }
 
     @Override
-    public boolean transfer(UUID sender, UUID receiver, int amount) {
+    public boolean transfer(UUID sender, UUID receiver, long amount) {
         if (!subtract(sender, amount))
             return false;
         add(receiver, amount);
