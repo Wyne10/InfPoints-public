@@ -1,4 +1,4 @@
-package org.bigcraft.infpoints.config;
+package org.bigcraft.infpoints.api.config;
 
 import org.bukkit.configuration.ConfigurationSection;
 

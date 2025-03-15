@@ -3,17 +3,30 @@ package org.bigcraft.infpoints.core;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import lombok.Getter;
+import net.milkbowl.vault.economy.Economy;
 import org.bigcraft.infpoints.InfPoints;
+import org.bigcraft.infpoints.command.BalanceCommand;
+import org.bigcraft.infpoints.command.PayCommand;
+import org.bigcraft.infpoints.command.PersonalCommand;
 import org.bigcraft.infpoints.core.factory.PointFactory;
+import org.bigcraft.infpoints.vault.VaultEconomy;
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.permissions.Permission;
+import org.bukkit.plugin.ServicePriority;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Singleton
 public class PointManager {
 
+    private final static String[] permissions = {"points.balance.", "points.balance-other.", "points.set.", "points.add.", "points.sub.", "points.pay."};
+
     @Getter private final Map<String, Point> points = new HashMap<>();
+    private final Set<PersonalCommand> personalCommands = new HashSet<>();
 
     private final InfPoints plugin;
     private final Map<String, PointFactory> pointTypeMap;
@@ -25,13 +38,34 @@ public class PointManager {
     }
 
     public void loadPoints() {
+        points.clear();
+        personalCommands.forEach(PersonalCommand::unregister);
+        personalCommands.clear();
         for (String pointKey : plugin.getConfig().getConfigurationSection("points").getKeys(false)) {
-            ConfigurationSection point = plugin.getConfig().getConfigurationSection("points." + pointKey);
-            String type = point.getString("type");
+            ConfigurationSection pointConfig = plugin.getConfig().getConfigurationSection("points." + pointKey);
+            String type = pointConfig.getString("type");
             if (!pointTypeMap.containsKey(type))
                 throw new IllegalArgumentException("Unknown point type " + type);
-            points.put(pointKey, pointTypeMap.get(type).create(point));
+            Point point = pointTypeMap.get(type).create(pointConfig);
+            points.put(pointKey, point);
+            if (point.getCommandConfig().payCommand() != null)
+                personalCommands.add(new PayCommand(points.get(pointKey)));
+            if (point.getCommandConfig().balanceCommand() != null)
+                personalCommands.add(new BalanceCommand(points.get(pointKey)));
         }
+    }
+
+    public void registerPermissions() {
+        points.keySet().forEach((key) -> {
+            for (String permission : permissions) {
+                Bukkit.getPluginManager().addPermission(new Permission(permission + key));
+            }
+        });
+    }
+
+    public void implementVault() {
+        if (plugin.getConfig().getBoolean("implementVault") && points.containsKey(plugin.getConfig().getString("vault")))
+            Bukkit.getServicesManager().register(Economy.class, new VaultEconomy(points.get(plugin.getConfig().getString("vault"))), plugin, ServicePriority.Normal);
     }
 
 }

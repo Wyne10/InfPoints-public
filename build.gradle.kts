@@ -1,3 +1,5 @@
+import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+
 plugins {
     id("java")
     alias(libs.plugins.shadow)
@@ -14,6 +16,7 @@ dependencies {
     compileOnly(libs.paperApi)
     compileOnly(libs.placeholderApi)
     compileOnly(libs.commandApi)
+    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
 
     implementation(project(":api"))
     implementation(libs.guice)
@@ -69,5 +72,33 @@ bukkit {
     author = findProperty("author").toString()
     main = "org.bigcraft.infpoints.InfPoints"
     apiVersion = "1.16"
-    softDepend = listOf("PlaceholderAPI", "CommandAPI")
+    softDepend = listOf("PlaceholderAPI", "CommandAPI", "Vault")
+    permissions {
+        register("points.balance.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.balance-other.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.set.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.add.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.sub.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.pay.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+
+        register("points.admin.*") {
+            children = listOf("points.admin.reload")
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.admin.reload") {
+            description = "Allows to reload plugin"
+        }
+    }
 }

@@ -14,12 +14,15 @@ dependencies {
 
 publishing {
     repositories {
-        maven {
-            url = uri(findProperty("myMavenRepoWriteUrl") ?: "")
+        val repoUrl = findProperty("myMavenRepoWriteUrl").toString()
+        if (repoUrl.isNotEmpty()) {
+            maven {
+                url = uri(repoUrl)
 
-            credentials {
-                username = findProperty("myMavenRepoWriteUsername").toString()
-                password = findProperty("myMavenRepoWritePassword").toString()
+                credentials {
+                    username = findProperty("myMavenRepoWriteUsername").toString()
+                    password = findProperty("myMavenRepoWritePassword").toString()
+                }
             }
         }
     }

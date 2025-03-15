@@ -6,6 +6,12 @@ info-point-balance-other: "&aИгрок '%player_name%' имеет %points_<key>
 
 ## Error
 error-point-not-found: "&cПоинт '<key>' не существует!"
+error-insufficient-balance: "&cНедостаточно средств!"
+error-permissions: "&cНедостаточно прав для исполнения этой команды!"
 
 ## Success
-success-plugin-reloaded: "&aПлагин перезагружен!"
+success-plugin-reload: "&aПлагин перезагружен!"
+success-point-set: "&aУстановлено <amount>%points_<key>_symbol% игроку '<player-name>'"
+success-point-add: "&aДобавлено <amount>%points_<key>_symbol% игроку '<player-name>'"
+success-point-sub: "&aВычтено <amount>%points_<key>_symbol% игрока '<player-name>'"
+success-point-pay: "&aПереведено <amount>%points_<key>_symbol% игроку '<player-name>'"
