@@ -3,6 +3,7 @@
 # Название монеты в множественном числе - %points_<key>_name-plural%
 # Символ монеты - %points_<key>_symbol%
 # Баланс - %points_<key>_balance%
+# Форматированный баланс - %points_<key>_balance-format%
 
 ### Messages
 
