@@ -3,6 +3,8 @@ package org.bigcraft.infpoints.placeholder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import me.wyne.wutils.common.Args;
+import me.wyne.wutils.common.placeholder.PAPIUtils;
 import me.wyne.wutils.i18n.I18n;
 import me.wyne.wutils.log.Log;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -12,8 +14,6 @@ import org.bigcraft.infpoints.core.PointManager;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 @Singleton
 public class PointsPlaceholders extends PlaceholderExpansion {
@@ -62,7 +62,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         }
 
         if (!pointManager.getPoints().containsKey(pointKey)) {
-            Log.global.error("Point " + pointKey + " not found");
+            Log.global.error("Point '" + pointKey + "' not found (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
             return null;
         }
 
@@ -76,7 +76,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
             case "balance-format": return formatNumber(String.valueOf(point.get(player.getUniqueId())));
         }
 
-        Log.global.error("Data " + data + " not found");
+        Log.global.error("Placeholder '" + data + "' not found (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
         return null;
     }
 
@@ -89,31 +89,6 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         }
 
         return sb.toString();
-    }
-
-    static class Args {
-        private final List<String> args;
-
-        public Args(String string, String regex) {
-            args = List.of(string.split(regex));
-        }
-
-        public String get(int index) {
-            if (index >= args.size())
-                return "";
-            return args.get(index).trim();
-        }
-
-        public String get(int index, String def) {
-            if (index >= args.size())
-                return def;
-            return args.get(index).trim();
-        }
-
-        public int size() {
-            return args.size();
-        }
-
     }
 
 }
