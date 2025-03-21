@@ -44,12 +44,16 @@ public class PointManager implements PointProvider {
     @Override
     @Nullable
     public PointType getPoint(String key) {
+        if (!points.containsKey(key))
+            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
         return points.get(key);
     }
 
     @Override
     @Nullable
     public PointConfig getPointConfig(String key) {
+        if (!points.containsKey(key))
+            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
         return points.get(key);
     }
 
@@ -61,7 +65,7 @@ public class PointManager implements PointProvider {
             ConfigurationSection pointConfig = plugin.getConfig().getConfigurationSection("points." + pointKey);
             String type = pointConfig.getString("type");
             if (!pointTypeMap.containsKey(type))
-                throw new IllegalArgumentException("Unknown point type " + type);
+                throw new IllegalArgumentException("Unknown point type '" + type + "'");
             Point point = pointTypeMap.get(type).create(pointConfig);
             points.put(pointKey, point);
             if (point.getCommandConfig().usePayCommand())
@@ -81,7 +85,7 @@ public class PointManager implements PointProvider {
 
     public void implementVault() {
         if (plugin.getConfig().getBoolean("implementVault") && points.containsKey(plugin.getConfig().getString("vault", "")))
-            Bukkit.getServicesManager().register(Economy.class, new VaultEconomy(points.get(plugin.getConfig().getString("vault"))), plugin, ServicePriority.Normal);
+            Bukkit.getServicesManager().register(Economy.class, new VaultEconomy((Point) getPoint(plugin.getConfig().getString("vault"))), plugin, ServicePriority.Normal);
     }
 
 }

@@ -23,11 +23,11 @@ dependencies {
     implementation(libs.ormLiteJdbc)
 
     implementation(libs.wutilsConfig)
-    implementation(libs.wutilsConfigugrables)
     implementation(libs.wutilsLog)
     implementation(libs.wutilsI18n)
     implementation(libs.wutilsJdbc)
     implementation(libs.wutilsJson)
+    implementation(libs.wutilsCommon)
 }
 
 tasks {
