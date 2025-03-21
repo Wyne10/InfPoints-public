@@ -1,7 +1,6 @@
 package org.bigcraft.infpoints.core;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
@@ -21,10 +20,11 @@ public class SqlPoint extends Point {
         try {
             DatabaseTableConfig<PointEntity> tableConfig = DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), PointEntity.class);
             tableConfig.setTableName(getConfig().key());
-            this.pointDao = DaoManager.createDao(connectionSource, tableConfig);
-            TableUtils.createTableIfNotExists(connectionSource, tableConfig);
+            this.pointDao = new PointEntityDao(connectionSource, tableConfig);
+            if (!pointDao.isTableExists())
+                TableUtils.createTable(pointDao);
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while creating " + getConfig().key() + " table", e);
+            Log.global.exception("An exception occurred while creating '" + getConfig().key() + "' table", e);
         }
     }
 
@@ -80,7 +80,7 @@ public class SqlPoint extends Point {
         try {
             pointDao.create(new PointEntity(player, balance));
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while creating the point entity", e);
+            Log.global.exception("An exception occurred while creating point entity", e);
         }
     }
 
@@ -88,7 +88,7 @@ public class SqlPoint extends Point {
         try {
             pointDao.update(entity.setBalance(balance));
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while updating the point entity", e);
+            Log.global.exception("An exception occurred while updating point entity", e);
         }
     }
 
