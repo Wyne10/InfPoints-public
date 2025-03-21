@@ -62,7 +62,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         }
 
         if (!pointManager.getPoints().containsKey(pointKey)) {
-            Log.global.error("Point '" + pointKey + "' not found (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
+            Log.global.error("Point '" + pointKey + "' doesn't exist (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
             return null;
         }
 
@@ -76,7 +76,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
             case "balance-format": return formatNumber(String.valueOf(point.get(player.getUniqueId())));
         }
 
-        Log.global.error("Placeholder '" + data + "' not found (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
+        Log.global.error("Placeholder '" + data + "' doesn't exist (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
         return null;
     }
 
