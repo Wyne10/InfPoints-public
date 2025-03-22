@@ -1,15 +1,19 @@
 ### Placeholders
-# Название монеты - %points_<key>_name%
-# Название монеты в множественном числе - %points_<key>_name-plural%
-# Символ монеты - %points_<key>_symbol%
+# Название поинта - %points_<key>_name%
+# Название поинта в множественном числе - %points_<key>_name-plural%
+# Символ поинта - %points_<key>_symbol%
+# Цвет поинта - %points_<key>_color%
 # Баланс - %points_<key>_balance%
 # Форматированный баланс - %points_<key>_balance-format%
 
 ### Messages
 
 ## Info
-info-point-balance: "&aУ вас есть %points_<key>_balance%%points_<key>_symbol%"
-info-point-balance-other: "&aИгрок '%player_name%' имеет %points_<key>_balance%%points_<key>_symbol%"
+info-point-balance: "&aУ вас есть %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "&aИгрок '%player_name%' имеет %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
+info-balance-set: "&aВаш баланс установлен на %points_<key>_color%<amount>%points_<key>_symbol%"
+info-balance-add: "&aВаш баланс пополнен на %points_<key>_color%<amount>%points_<key>_symbol%"
+info-balance-sub: "&cС вашего баланса снято %points_<key>_color%<amount>%points_<key>_symbol%"
 info-help:
   - "Help"
 
@@ -21,7 +25,6 @@ error-permissions: "&cНедостаточно прав для исполнен�
 
 ## Success
 success-plugin-reload: "&aПлагин перезагружен!"
-success-point-set: "&aУстановлено <amount>%points_<key>_symbol% игроку '<player-name>'"
-success-point-add: "&aДобавлено <amount>%points_<key>_symbol% игроку '<player-name>'"
-success-point-sub: "&aВычтено <amount>%points_<key>_symbol% игрока '<player-name>'"
-success-point-pay: "&aПереведено <amount>%points_<key>_symbol% игроку '<player-name>'"
+success-point-set: "&aУстановлено %points_<key>_color%<amount>%points_<key>_symbol% &aигроку '<player-name>'"
+success-point-add: "&aДобавлено %points_<key>_color%<amount>%points_<key>_symbol% &aигроку '<player-name>'"
+success-point-sub: "&aВычтено %points_<key>_color%<amount>%points_<key>_symbol% &aигрока '<player-name>'"

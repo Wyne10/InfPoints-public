@@ -20,4 +20,10 @@ public abstract class Point implements PointType, PointConfig {
         this.commandConfig = CommandConfig.fromConfig(config);
     }
 
+    protected Point(Point point) {
+        this.config = point.config;
+        this.visualConfig = point.visualConfig;
+        this.commandConfig = point.commandConfig;
+    }
+
 }

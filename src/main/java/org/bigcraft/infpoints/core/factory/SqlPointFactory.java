@@ -23,7 +23,7 @@ public class SqlPointFactory implements PointFactory {
     @Override
     public Point create(ConfigurationSection config) {
         if (!connectionProvider.isActive()) {
-            Log.global.warn("SQL connection is not active, " + config.getName() + " point will be using memory type");
+            Log.global.warn("SQL connection is not active, '" + config.getName() + "' point will be using memory type");
             return new MemoryPoint(config);
         }
         return new SqlPoint(config, connectionProvider.getConnectionPool().getSource());

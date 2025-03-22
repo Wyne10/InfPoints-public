@@ -78,7 +78,7 @@ public class InfPointsCommand {
                                 .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
-                                                    addSetSub(sender, args, "points.sub.", "success-point-sub", (point, player, amount) -> point.set(player, point.get(player) - amount));
+                                                    addSetSub(sender, args, "points.sub.", "success-point-sub", PointType::subtract);
                                                 }))))
                         .then(new LiteralArgument("pay").executes(InfPointsCommand::sendHelp)
                                 .then(new IntegerArgument("amount", 1).executes(InfPointsCommand::sendHelp)
@@ -103,15 +103,6 @@ public class InfPointsCommand {
                                                                 sender,
                                                                 "error-insufficient-funds",
                                                                 Placeholder.replace("key", args.getRaw("point"))
-                                                        ));
-                                                    else
-                                                        sender.sendMessage(I18n.global.getPlaceholderComponent(
-                                                                sender.locale(),
-                                                                sender,
-                                                                "success-point-pay",
-                                                                Placeholder.replace("key", args.getRaw("point")),
-                                                                Placeholder.replace("amount", amount),
-                                                                Placeholder.replace("player-name", player.getName())
                                                         ));
                                         })))))
                 .then(new LiteralArgument("reload")

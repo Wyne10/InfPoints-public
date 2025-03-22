@@ -61,12 +61,12 @@ public class PointManager implements PointProvider {
         points.clear();
         personalCommands.forEach(PersonalCommand::unregister);
         personalCommands.clear();
-        for (String pointKey : plugin.getConfig().getConfigurationSection("points").getKeys(false)) {
-            ConfigurationSection pointConfig = plugin.getConfig().getConfigurationSection("points." + pointKey);
+        for (String pointKey : plugin.getConfig().getConfigurationSection("point").getKeys(false)) {
+            ConfigurationSection pointConfig = plugin.getConfig().getConfigurationSection("point." + pointKey);
             String type = pointConfig.getString("type");
             if (!pointTypeMap.containsKey(type))
                 throw new IllegalArgumentException("Unknown point type '" + type + "'");
-            Point point = pointTypeMap.get(type).create(pointConfig);
+            Point point = new PointEventCallback(pointTypeMap.get(type).create(pointConfig));
             points.put(pointKey, point);
             if (point.getCommandConfig().usePayCommand())
                 personalCommands.add(new PayCommand(points.get(pointKey)));

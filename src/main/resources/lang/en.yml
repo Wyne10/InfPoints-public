@@ -1,15 +1,19 @@
 ### Placeholders
-# Название монеты - %points_<key>_name%
-# Название монеты в множественном числе - %points_<key>_name-plural%
-# Символ монеты - %points_<key>_symbol%
-# Баланс - %points_<key>_balance%
-# Форматированный баланс - %points_<key>_balance-format%
+# Point name - %points_<key>_name%
+# Plural point name - %points_<key>_name-plural%
+# Point symbol- %points_<key>_symbol%
+# Point color - %points_<key>_color%
+# Balance - %points_<key>_balance%
+# Formatted balance - %points_<key>_balance-format%
 
 ### Messages
 
 ## Info
-info-point-balance: "&aYou have %points_<key>_balance%%points_<key>_symbol%"
-info-point-balance-other: "&aPlayer '%player_name%' have %points_<key>_balance%%points_<key>_symbol%"
+info-point-balance: "&aYou have %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "&aPlayer '%player_name%' has %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
+info-balance-set: "&aYour balance is set to %points_<key>_color%<amount>%points_<key>_symbol%"
+info-balance-add: "&aYour balance has been replenished by %points_<key>_color%<amount>%points_<key>_symbol%"
+info-balance-sub: "%points_<key>_color%<amount>%points_<key>_symbol% &chave been withdrawn from your balance"
 info-help:
   - "Help"
 
@@ -21,8 +25,6 @@ error-permissions: "&cNot enough permissions to execute this command!"
 
 ## Success
 success-plugin-reload: "&aPlugin reloaded!"
-success-point-set: "&aSet <amount>%points_<key>_symbol% to '<player-name>'"
-success-point-add: "&aAdded <amount>%points_<key>_symbol% to '<player-name>'"
-success-point-sub: "&aSubtracted <amount>%points_<key>_symbol% from '<player-name>'"
-success-point-pay: "&aPayed <amount>%points_<key>_symbol% to '<player-name>'"
-
+success-point-set: "&aSet %points_<key>_color%<amount>%points_<key>_symbol% &ato '<player-name>'"
+success-point-add: "&aAdded %points_<key>_color%<amount>%points_<key>_symbol% &ato '<player-name>'"
+success-point-sub: "&aSubtracted %points_<key>_color%<amount>%points_<key>_symbol% &afrom '<player-name>'"

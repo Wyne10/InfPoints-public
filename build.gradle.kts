@@ -35,10 +35,10 @@ tasks {
         archiveBaseName.set(findProperty("name").toString())
         archiveClassifier.set("")
         minimize()
-        relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
+/*        relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
         relocate("com.google.common", "org.bigcraft.infpoints.shadow.google.common")
         relocate("com.j256.ormlite", "org.bigcraft.infpoints.shadow.j256.ormlite")
-        relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")
+        relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")*/
     }
 
     runServer {
