@@ -7,7 +7,7 @@ serializer: LEGACY
 implementVault: false
 vault: primary
 
-points:
+point:
   primary:
     # Обязательный параметр. Тип поинта. Доступные варианты:
     # MEMORY - Сохранение в памяти (Очищается после перезагрузки плагина)
@@ -20,16 +20,19 @@ points:
     # Необязательный параметр. Стартовый баланс.
     defaultBalance: 100
 
-    # Название монеты (%points_<key>_name%)
+    # Название поинта (%points_<key>_name%)
     name: 'Монета'
 
-    # Название монеты в множественном числе (%points_<key>_name-plural%)
+    # Название поинта во множественном числе (%points_<key>_name-plural%)
     namePlural: 'Монеты'
 
-    # Символ монеты (%points_<key>_symbol%)
+    # Цвет поинта (%points_<key>_color%)
+    color: '&6'
+
+    # Символ поинта (%points_<key>_symbol%)
     symbol: '🪙'
 
-    # Личные команды для этой монеты, оставьте параметры пустыми или удалите, чтобы не использовать команды
+    # Личные команды для этого поинта, оставьте параметры пустыми или удалите, чтобы не использовать команды
     payCommand: 'pay'
     payAliases: []
     balanceCommand: 'balance'
@@ -38,4 +41,5 @@ points:
     type: XP
     name: 'Ур. опыта'
     namePlural: 'Ур. опыта'
+    color: '&a'
     symbol: 'Ур. опыта'

@@ -48,6 +48,7 @@ public class InfPoints extends JavaPlugin {
                     new PointTypeModule(),
                     new PlaceholderModule(),
                     new CommandModule(),
+                    new ListenerModule(),
                     new ApiModule()
             );
         } catch (CreationException e) {

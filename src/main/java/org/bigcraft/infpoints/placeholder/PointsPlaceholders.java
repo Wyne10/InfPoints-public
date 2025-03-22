@@ -72,6 +72,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
             case "name": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().name()));
             case "name-plural": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().pluralName()));
             case "symbol": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().symbol()));
+            case "color": return point.getVisualConfig().color();
             case "balance": return String.valueOf(point.get(player.getUniqueId()));
             case "balance-format": return formatNumber(String.valueOf(point.get(player.getUniqueId())));
         }
