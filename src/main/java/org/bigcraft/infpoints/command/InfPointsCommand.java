@@ -66,19 +66,19 @@ public class InfPointsCommand {
                                 .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
-                                                    addSetSub(sender, args, "points.set.", "success-point-set", PointType::set);
+                                                    addSetSub(sender, args, "points.set.", "success-point-set", "info-balance-set", PointType::set);
                                                 }))))
                         .then(new LiteralArgument("add").executes(InfPointsCommand::sendHelp)
                                 .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
-                                                    addSetSub(sender, args, "points.add.", "success-point-add", PointType::add);
+                                                    addSetSub(sender, args, "points.add.", "success-point-add", "info-balance-add", PointType::add);
                                                 }))))
                         .then(new LiteralArgument("sub").executes(InfPointsCommand::sendHelp)
                                 .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
-                                                    addSetSub(sender, args, "points.sub.", "success-point-sub", PointType::subtract);
+                                                    addSetSub(sender, args, "points.sub.", "success-point-sub", "info-balance-sub", PointType::subtract);
                                                 }))))
                         .then(new LiteralArgument("pay").executes(InfPointsCommand::sendHelp)
                                 .then(new IntegerArgument("amount", 1).executes(InfPointsCommand::sendHelp)
@@ -104,6 +104,15 @@ public class InfPointsCommand {
                                                                 "error-insufficient-funds",
                                                                 Placeholder.replace("key", args.getRaw("point"))
                                                         ));
+                                                    else
+                                                        sender.sendMessage(I18n.global.getPlaceholderComponent(
+                                                                sender.locale(),
+                                                                sender,
+                                                                "success-point-pay",
+                                                                Placeholder.replace("key", args.getRaw("point")),
+                                                                Placeholder.replace("amount", amount),
+                                                                Placeholder.replace("player-name", player.getName())
+                                                        ));
                                         })))))
                 .then(new LiteralArgument("reload")
                         .withPermission("points.admin.reload")
@@ -114,7 +123,7 @@ public class InfPointsCommand {
                 .register(plugin);
     }
 
-    private void addSetSub(CommandSender sender, CommandArguments args, String permission, String message, AddSetSub operation) throws WrapperCommandSyntaxException {
+    private void addSetSub(CommandSender sender, CommandArguments args, String permission, String message, String receiverMessage, AddSetSub operation) throws WrapperCommandSyntaxException {
         hasPermission(sender, permission + getPointKey(sender, args));
         Player player = args.getByClass("target", Player.class);
         int amount = args.getByClassOrDefault("amount", Integer.class, 0);
@@ -128,6 +137,9 @@ public class InfPointsCommand {
                 Placeholder.replace("amount", amount),
                 Placeholder.replace("player-name", player.getName())
         ));
+        player.sendMessage(I18n.global.getPlaceholderComponent(player.locale(), player, receiverMessage,
+                Placeholder.replace("key", args.getRaw("point")),
+                Placeholder.replace("amount", amount)));
     }
 
     @FunctionalInterface
