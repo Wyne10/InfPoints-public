@@ -63,19 +63,19 @@ public class InfPointsCommand {
                                             ));
                                 })))
                         .then(new LiteralArgument("set").executes(InfPointsCommand::sendHelp)
-                                .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
+                                .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.set.", "success-point-set", "info-balance-set", PointType::set);
                                                 }))))
                         .then(new LiteralArgument("add").executes(InfPointsCommand::sendHelp)
-                                .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
+                                .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.add.", "success-point-add", "info-balance-add", PointType::add);
                                                 }))))
                         .then(new LiteralArgument("sub").executes(InfPointsCommand::sendHelp)
-                                .then(new IntegerArgument("amount").executes(InfPointsCommand::sendHelp)
+                                .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
                                         .then(new EntitySelectorArgument.OnePlayer("target")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.sub.", "success-point-sub", "info-balance-sub", PointType::subtract);
@@ -110,7 +110,7 @@ public class InfPointsCommand {
                                                                 sender,
                                                                 "success-point-pay",
                                                                 Placeholder.replace("key", args.getRaw("point")),
-                                                                Placeholder.replace("amount", amount),
+                                                                Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
                                                                 Placeholder.replace("player-name", player.getName())
                                                         ));
                                         })))))
@@ -126,7 +126,7 @@ public class InfPointsCommand {
     private void addSetSub(CommandSender sender, CommandArguments args, String permission, String message, String receiverMessage, AddSetSub operation) throws WrapperCommandSyntaxException {
         hasPermission(sender, permission + getPointKey(sender, args));
         Player player = args.getByClass("target", Player.class);
-        int amount = args.getByClassOrDefault("amount", Integer.class, 0);
+        double amount = args.getByClassOrDefault("amount", Double.class, 0D);
         Point point = getPoint(sender, args);
         operation.execute(point, player.getUniqueId(), amount);
         sender.sendMessage(I18n.global.getPlaceholderComponent(
@@ -134,17 +134,17 @@ public class InfPointsCommand {
                 player,
                 message,
                 Placeholder.replace("key", args.getRaw("point")),
-                Placeholder.replace("amount", amount),
+                Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
                 Placeholder.replace("player-name", player.getName())
         ));
         player.sendMessage(I18n.global.getPlaceholderComponent(player.locale(), player, receiverMessage,
                 Placeholder.replace("key", args.getRaw("point")),
-                Placeholder.replace("amount", amount)));
+                Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))));
     }
 
     @FunctionalInterface
     interface AddSetSub {
-        void execute(Point point, UUID player, int amount);
+        void execute(Point point, UUID player, double amount);
     }
 
     private void hasPermission(CommandSender sender, String permission) throws WrapperCommandSyntaxException{

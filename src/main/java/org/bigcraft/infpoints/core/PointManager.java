@@ -43,7 +43,15 @@ public class PointManager implements PointProvider {
 
     @Override
     @Nullable
-    public PointType getPoint(String key) {
+    public org.bigcraft.infpoints.api.Point getPoint(String key) {
+        if (!points.containsKey(key))
+            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
+        return points.get(key);
+    }
+
+    @Override
+    @Nullable
+    public PointType getPointType(String key) {
         if (!points.containsKey(key))
             throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
         return points.get(key);

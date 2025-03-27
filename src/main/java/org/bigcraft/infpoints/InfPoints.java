@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 import com.google.inject.*;
 import com.j256.ormlite.logger.Level;
 import com.j256.ormlite.logger.Logger;
+import lombok.Getter;
 import me.wyne.wutils.config.Config;
 import me.wyne.wutils.i18n.I18n;
 import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
@@ -21,6 +22,7 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.concurrent.Executors;
 
 @Singleton

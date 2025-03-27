@@ -5,6 +5,8 @@
 # Цвет поинта - %points_<key>_color%
 # Баланс - %points_<key>_balance%
 # Форматированный баланс - %points_<key>_balance-format%
+# Целочисленный баланс - %points_<key>_balance-int%
+# Форматированный целочисленный баланс - %points_<key>_balance-int-format%
 
 ### Messages
 

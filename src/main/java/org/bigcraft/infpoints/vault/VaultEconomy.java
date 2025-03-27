@@ -39,7 +39,7 @@ public class VaultEconomy implements Economy {
 
     @Override
     public String format(double amount) {
-        return String.valueOf((int) amount);
+        return String.valueOf(point.getVisualConfig().decimalFormat().format(amount));
     }
 
     @Override

@@ -12,7 +12,7 @@ public enum PointEventType {
 
     @FunctionalInterface
     interface PointEventFactory {
-        PointEvent create(PointType pointType, PointConfig pointConfig, UUID player, long amount, PointEventType type);
+        PointEvent create(PointType pointType, PointConfig pointConfig, UUID player, double amount, PointEventType type);
     }
     private final PointEventFactory factory;
 
@@ -20,7 +20,7 @@ public enum PointEventType {
         this.factory = factory;
     }
 
-    public PointEvent call(PointType pointType, PointConfig pointConfig, UUID player, long amount) {
+    public PointEvent call(PointType pointType, PointConfig pointConfig, UUID player, double amount) {
         return this.factory.create(pointType, pointConfig, player, amount, this);
     }
 }

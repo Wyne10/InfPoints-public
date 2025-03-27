@@ -29,42 +29,17 @@ public class SqlPoint extends Point {
     }
 
     @Override
-    public long get(UUID player) {
+    public double get(UUID player) {
         return getEntity(player)
                 .map(PointEntity::getBalance)
                 .orElse(getConfig().defaultBalance());
     }
 
     @Override
-    public void add(UUID player, long amount) {
-        getEntity(player)
-                .ifPresentOrElse(entity -> update(entity, entity.getBalance() + amount),
-                        () -> create(player, getConfig().defaultBalance() + amount));
-    }
-
-    @Override
-    public boolean subtract(UUID player, long amount) {
-        if (get(player) < amount)
-            return false;
-        getEntity(player)
-                .ifPresentOrElse(entity -> update(entity, entity.getBalance() - amount),
-                        () -> create(player, getConfig().defaultBalance() - amount));
-        return true;
-    }
-
-    @Override
-    public void set(UUID player, long amount) {
+    public void set(UUID player, double amount) {
         getEntity(player)
                 .ifPresentOrElse(entity -> update(entity, amount),
                         () -> create(player, amount));
-    }
-
-    @Override
-    public boolean transfer(UUID sender, UUID receiver, long amount) {
-        if (!subtract(sender, amount))
-            return false;
-        add(receiver, amount);
-        return true;
     }
 
     private Optional<PointEntity> getEntity(UUID uuid) {
@@ -76,7 +51,7 @@ public class SqlPoint extends Point {
         return Optional.empty();
     }
 
-    private void create(UUID player, long balance) {
+    private void create(UUID player, double balance) {
         try {
             pointDao.create(new PointEntity(player, balance));
         } catch (SQLException e) {
@@ -84,7 +59,7 @@ public class SqlPoint extends Point {
         }
     }
 
-    private void update(PointEntity entity, long balance) {
+    private void update(PointEntity entity, double balance) {
         try {
             pointDao.update(entity.setBalance(balance));
         } catch (SQLException e) {
