@@ -8,9 +8,6 @@
 # Целочисленный баланс - %points_<key>_balance-int%
 # Форматированный целочисленный баланс - %points_<key>_balance-int-format%
 
-### Format
-format-decimal: "#.##"
-
 ### Messages
 
 ## Info
