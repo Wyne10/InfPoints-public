@@ -5,6 +5,11 @@
 # Point color - %points_<key>_color%
 # Balance - %points_<key>_balance%
 # Formatted balance - %points_<key>_balance-format%
+# Integer balance - %points_<key>_balance-int%
+# Formatted integer balance - %points_<key>_balance-int-format%
+
+### Format
+format-decimal: "#.##"
 
 ### Messages
 

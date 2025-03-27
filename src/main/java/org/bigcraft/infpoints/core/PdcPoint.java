@@ -19,39 +19,16 @@ public class PdcPoint extends Point {
     }
 
     @Override
-    public long get(UUID player) {
+    public double get(UUID player) {
         return getData(player)
-                .map(data -> data.getOrDefault(key, PersistentDataType.LONG, 0L))
+                .map(data -> data.getOrDefault(key, PersistentDataType.DOUBLE, 0D))
                 .orElse(getConfig().defaultBalance());
     }
 
     @Override
-    public void add(UUID player, long amount) {
+    public void set(UUID player, double amount) {
         getData(player)
-                .ifPresent(data -> set(player, get(player) + amount));
-    }
-
-    @Override
-    public boolean subtract(UUID player, long amount) {
-        if (get(player) < amount)
-            return false;
-        getData(player)
-                .ifPresent(data -> set(player, get(player) - amount));
-        return true;
-    }
-
-    @Override
-    public void set(UUID player, long amount) {
-        getData(player)
-                .ifPresent(data -> data.set(key, PersistentDataType.LONG, amount));
-    }
-
-    @Override
-    public boolean transfer(UUID sender, UUID receiver, long amount) {
-        if (!subtract(sender, amount))
-            return false;
-        add(receiver, amount);
-        return true;
+                .ifPresent(data -> data.set(key, PersistentDataType.DOUBLE, amount));
     }
 
     private Optional<PersistentDataContainer> getData(UUID uuid) {

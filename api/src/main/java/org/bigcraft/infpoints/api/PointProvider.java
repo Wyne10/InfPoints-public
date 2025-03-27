@@ -4,7 +4,8 @@ import org.jetbrains.annotations.Nullable;
 
 public interface PointProvider {
 
-    @Nullable PointType getPoint(String key);
+    @Nullable Point getPoint(String key);
+    @Nullable PointType getPointType(String key);
     @Nullable PointConfig getPointConfig(String key);
 
 }

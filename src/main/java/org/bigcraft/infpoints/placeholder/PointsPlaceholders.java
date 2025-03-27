@@ -73,8 +73,10 @@ public class PointsPlaceholders extends PlaceholderExpansion {
             case "name-plural": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().pluralName()));
             case "symbol": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().symbol()));
             case "color": return point.getVisualConfig().color();
-            case "balance": return String.valueOf(point.get(player.getUniqueId()));
-            case "balance-format": return formatNumber(String.valueOf(point.get(player.getUniqueId())));
+            case "balance": return point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId()));
+            case "balance-format": return formatNumber(point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId())));
+            case "balance-int": return String.valueOf((int) point.get(player.getUniqueId()));
+            case "balance-int-format": return formatNumber(String.valueOf((int) point.get(player.getUniqueId())));
         }
 
         Log.global.error("Placeholder '" + data + "' doesn't exist (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
@@ -82,14 +84,15 @@ public class PointsPlaceholders extends PlaceholderExpansion {
     }
 
     private String formatNumber(String number) {
-        StringBuilder sb = new StringBuilder(number);
+        boolean containsDecimal = number.contains(".");
+        StringBuilder sb = new StringBuilder(number.substring(0, containsDecimal ? number.lastIndexOf('.') : number.length()));
         int length = sb.length();
 
         for (int i = length - 3; i > 0; i -= 3) {
             sb.insert(i, ",");
         }
 
-        return sb.toString();
+        return sb + (containsDecimal ? number.substring(number.lastIndexOf('.')) : "");
     }
 
 }

@@ -12,17 +12,17 @@ public class PointEntity {
     private UUID player;
 
     @DatabaseField
-    private long balance;
+    private double balance;
 
     public PointEntity() {
     }
 
-    public PointEntity(UUID player, long balance) {
+    public PointEntity(UUID player, double balance) {
         this.player = player;
         this.balance = balance;
     }
 
-    public PointEntity setBalance(long balance) {
+    public PointEntity setBalance(double balance) {
         this.balance = balance;
         return this;
     }

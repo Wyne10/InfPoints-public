@@ -16,11 +16,11 @@ public abstract class PointEvent extends Event implements Cancellable {
     private final PointType pointType;
     private final PointConfig pointConfig;
     private final UUID player;
-    private long amount;
+    private double amount;
     private final PointEventType type;
     private boolean cancelled;
 
-    public PointEvent(PointType pointType, PointConfig pointConfig, UUID player, long amount, PointEventType type) {
+    public PointEvent(PointType pointType, PointConfig pointConfig, UUID player, double amount, PointEventType type) {
         super();
         this.pointType = pointType;
         this.pointConfig = pointConfig;
@@ -29,7 +29,7 @@ public abstract class PointEvent extends Event implements Cancellable {
         this.type = type;
     }
 
-    public void setAmount(long amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -45,7 +45,7 @@ public abstract class PointEvent extends Event implements Cancellable {
         return player;
     }
 
-    public long getAmount() {
+    public double getAmount() {
         return amount;
     }
 

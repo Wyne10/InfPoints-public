@@ -4,10 +4,10 @@ import java.util.UUID;
 
 public interface PointType {
 
-    long get(UUID player);
-    void add(UUID player, long amount);
-    boolean subtract(UUID player, long amount);
-    void set(UUID player, long amount);
-    boolean transfer(UUID sender, UUID receiver, long amount);
+    double get(UUID player);
+    void add(UUID player, double amount);
+    boolean subtract(UUID player, double amount);
+    void set(UUID player, double amount);
+    boolean transfer(UUID sender, UUID receiver, double amount);
 
 }
