@@ -7,7 +7,6 @@ import me.wyne.wutils.common.Args;
 import me.wyne.wutils.common.placeholder.PAPIUtils;
 import me.wyne.wutils.i18n.I18n;
 import me.wyne.wutils.log.Log;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.core.Point;
 import org.bigcraft.infpoints.core.PointManager;
@@ -17,8 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 @Singleton
 public class PointsPlaceholders extends PlaceholderExpansion {
-
-    private final LegacyComponentSerializer legacy = LegacyComponentSerializer.legacyAmpersand();
 
     private final InfPoints plugin;
     private final PointManager pointManager;
@@ -69,9 +66,9 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         Point point = pointManager.getPoints().get(pointKey);
 
         switch (data) {
-            case "name": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().name()));
-            case "name-plural": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().pluralName()));
-            case "symbol": return legacy.serialize(I18n.global.getComponent(I18n.toLocale(player), point.getVisualConfig().symbol()));
+            case "name": return I18n.global.getString(I18n.toLocale(player), point.getVisualConfig().name());
+            case "name-plural": return I18n.global.getString(I18n.toLocale(player), point.getVisualConfig().pluralName());
+            case "symbol": return I18n.global.getString(I18n.toLocale(player), point.getVisualConfig().symbol());
             case "color": return point.getVisualConfig().color();
             case "balance": return point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId()));
             case "balance-format": return formatNumber(point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId())));
