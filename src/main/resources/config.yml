@@ -2,7 +2,9 @@ regenerate: true
 lang: 'en.yml'
 usePlayerLanguage: true
 # LEGACY/ENHANCED_LEGACY/MINI_MESSAGE
-serializer: LEGACY
+serializer: MINI_MESSAGE
+# OFF/FATAL/ERROR/WARN/INFO/DEBUG/TRACE/ALL
+log-level: INFO
 
 implementVault: false
 vault: primary
@@ -26,7 +28,7 @@ point:
     # Название поинта во множественном числе (%points_<key>_name-plural%)
     namePlural: 'Монеты'
 
-    # Цвет поинта (%points_<key>_color%)
+    # Цвет поинта, только в legacy формате (%points_<key>_color%)
     color: '&6'
 
     # Символ поинта (%points_<key>_symbol%)
