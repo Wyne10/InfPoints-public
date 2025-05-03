@@ -40,9 +40,10 @@ public class PointEventListener implements Listener {
     private void sendMessage(String message, PointEvent event) {
         Player player = Bukkit.getPlayer(event.getPlayer());
         if (player != null) {
-            player.sendMessage(I18n.global.getPlaceholderComponent(player.locale(), player, message,
+            I18n.global.getPlaceholderComponent(player.locale(), player, message,
                     Placeholder.replace("key", event.getPointConfig().getConfig().key()),
-                    Placeholder.replace("amount", event.getAmount())));
+                    Placeholder.replace("amount", event.getAmount())
+            ).sendMessage(player);
         }
     }
 

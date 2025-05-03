@@ -66,10 +66,11 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         Point point = pointManager.getPoints().get(pointKey);
 
         switch (data) {
-            case "name": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().name());
-            case "name-plural": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().pluralName());
-            case "symbol": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().symbol());
+            case "name": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().name()).get();
+            case "name-plural": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().pluralName()).get();
+            case "symbol": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().symbol()).get();
             case "color": return point.getVisualConfig().color();
+            case "color-mm": return point.getColorMiniMessage();
             case "balance": return point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId()));
             case "balance-format": return formatNumber(point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId())));
             case "balance-int": return String.valueOf((int) point.get(player.getUniqueId()));

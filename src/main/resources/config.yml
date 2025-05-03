@@ -2,7 +2,9 @@ regenerate: true
 lang: 'en.yml'
 usePlayerLanguage: true
 # LEGACY/ENHANCED_LEGACY/MINI_MESSAGE
-serializer: LEGACY
+serializer: MINI_MESSAGE
+# OFF/FATAL/ERROR/WARN/INFO/DEBUG/TRACE/ALL
+log-level: INFO
 
 implementVault: false
 vault: primary

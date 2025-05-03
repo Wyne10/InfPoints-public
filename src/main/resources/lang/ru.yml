@@ -11,23 +11,23 @@
 ### Messages
 
 ## Info
-info-point-balance: "&aУ вас есть %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
-info-point-balance-other: "&aИгрок '%player_name%' имеет %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
-info-balance-set: "&aВаш баланс установлен на %points_<key>_color%<amount>%points_<key>_symbol%"
-info-balance-add: "&aВаш баланс пополнен на %points_<key>_color%<amount>%points_<key>_symbol%"
-info-balance-sub: "&cС вашего баланса снято %points_<key>_color%<amount>%points_<key>_symbol%"
+info-point-balance: "<green>У вас есть %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "<green>Игрок '%player_name%' имеет %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
+info-balance-set: "<green>Ваш баланс установлен на %points_<key>_color%<amount>%points_<key>_symbol%"
+info-balance-add: "<green>Ваш баланс пополнен на %points_<key>_color%<amount>%points_<key>_symbol%"
+info-balance-sub: "<red>С вашего баланса снято %points_<key>_color%<amount>%points_<key>_symbol%"
 info-help:
   - "Help"
 
 ## Error
-error-point-not-found: "&cПоинт '<key>' не существует!"
-error-insufficient-funds: "&cНедостаточно средств!"
-error-pay-self: "&cНельзя перевести себе!"
-error-permissions: "&cНедостаточно прав для исполнения этой команды!"
+error-point-not-found: "<red>Поинт '<key>' не существует!"
+error-insufficient-funds: "<red>Недостаточно средств!"
+error-pay-self: "<red>Нельзя перевести себе!"
+error-permissions: "<red>Недостаточно прав для исполнения этой команды!"
 
 ## Success
-success-plugin-reload: "&aПлагин перезагружен!"
-success-point-set: "&aУстановлено %points_<key>_color%<amount>%points_<key>_symbol% &aигроку '<player-name>'"
-success-point-add: "&aДобавлено %points_<key>_color%<amount>%points_<key>_symbol% &aигроку '<player-name>'"
-success-point-sub: "&aВычтено %points_<key>_color%<amount>%points_<key>_symbol% &aигрока '<player-name>'"
-success-point-pay: "&aПереведено %points_<key>_color%<amount>%points_<key>_symbol% игроку '<player-name>'"
+success-plugin-reload: "<green>Плагин перезагружен!"
+success-point-set: "<green>Установлено %points_<key>_color%<amount>%points_<key>_symbol% <green>игроку '<player-name>'"
+success-point-add: "<green>Добавлено %points_<key>_color%<amount>%points_<key>_symbol% <green>игроку '<player-name>'"
+success-point-sub: "<green>Вычтено %points_<key>_color%<amount>%points_<key>_symbol% <green>игрока '<player-name>'"
+success-point-pay: "<green>Переведено %points_<key>_color%<amount>%points_<key>_symbol% игроку '<player-name>'"

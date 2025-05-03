@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import me.wyne.wutils.jdbc.ConnectionPool;
 import me.wyne.wutils.jdbc.OrmLiteConnectionPool;
 import me.wyne.wutils.log.Log;
+import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.config.SqlConfig;
 
 @Singleton
@@ -31,7 +32,7 @@ public class ConnectionProvider {
         }
         if (connectionPool != null)
             close();
-        this.connectionPool = new OrmLiteConnectionPool(config.getJdbcUrl(), config.getUsername(), config.getPassword());
+        this.connectionPool = new OrmLiteConnectionPool(config.getJdbcUrl(), config.getUsername(), config.getPassword(), InfPoints.getInstance().getLog());
     }
 
     public boolean isActive() {

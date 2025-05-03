@@ -43,24 +43,24 @@ public class InfPointsCommand {
                                 .executesPlayer((sender, args) -> {
                                     hasPermission(sender, "points.balance." + getPointKey(sender, args));
                                     String point = getPointKey(sender, args);
-                                    sender.sendMessage(I18n.global.getPlaceholderComponent(
+                                    I18n.global.getPlaceholderComponent(
                                             sender.locale(),
                                             sender,
                                         "info-point-balance",
                                             Placeholder.replace("key", point)
-                                    ));
+                                    ).sendMessage(sender);
                                 })
                                 .then(new EntitySelectorArgument.OnePlayer("target")
                                         .executes((sender, args) -> {
                                             hasPermission(sender, "points.balance-other." + getPointKey(sender, args));
                                             Player player = args.getByClass("target", Player.class);
                                             String point = getPointKey(sender, args);
-                                            sender.sendMessage(I18n.global.getPlaceholderComponent(
+                                            I18n.global.getPlaceholderComponent(
                                                     I18n.toLocale(sender),
                                                     player,
                                                     "info-point-balance-other",
                                                     Placeholder.replace("key", point)
-                                            ));
+                                            ).sendMessage(sender);
                                 })))
                         .then(new LiteralArgument("set").executes(InfPointsCommand::sendHelp)
                                 .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
@@ -87,38 +87,39 @@ public class InfPointsCommand {
                                                     hasPermission(sender, "points.pay." + getPointKey(sender, args));
                                                     Player player = args.getByClass("target", Player.class);
                                                     if (player == sender)
-                                                        throw CommandAPIBukkit.failWithAdventureComponent(I18n.global.getPlaceholderComponent(
+                                                        throw CommandAPIBukkit.failWithBaseComponents(I18n.global.getPlaceholderComponent(
                                                                 sender.locale(),
                                                                 sender,
                                                                 "error-pay-self",
                                                                 Placeholder.replace("key", args.getRaw("point"))
-                                                        ));
+                                                        ).bungee());
 
                                                     int amount = args.getByClassOrDefault("amount", Integer.class, 1);
                                                     Point point = getPoint(sender, args);
                                                     boolean result = point.transfer(sender.getUniqueId(), player.getUniqueId(), amount);
                                                     if (!result)
-                                                        sender.sendMessage(I18n.global.getPlaceholderComponent(
+                                                        I18n.global.getPlaceholderComponent(
                                                                 sender.locale(),
                                                                 sender,
                                                                 "error-insufficient-funds",
                                                                 Placeholder.replace("key", args.getRaw("point"))
-                                                        ));
+                                                        ).sendMessage(sender);
                                                     else
-                                                        sender.sendMessage(I18n.global.getPlaceholderComponent(
+                                                        I18n.global.getPlaceholderComponent(
                                                                 sender.locale(),
                                                                 sender,
                                                                 "success-point-pay",
                                                                 Placeholder.replace("key", args.getRaw("point")),
                                                                 Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
                                                                 Placeholder.replace("player-name", player.getName())
-                                                        ));
+                                                        ).sendMessage(sender);
                                         })))))
                 .then(new LiteralArgument("reload")
                         .withPermission("points.admin.reload")
                         .executes((sender, args) -> {
                             plugin.reload();
-                            sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "success-plugin-reload"));
+                            I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "success-plugin-reload")
+                                    .sendMessage(sender);
                         }))
                 .register(plugin);
     }
@@ -129,17 +130,18 @@ public class InfPointsCommand {
         double amount = args.getByClassOrDefault("amount", Double.class, 0D);
         Point point = getPoint(sender, args);
         operation.execute(point, player.getUniqueId(), amount);
-        sender.sendMessage(I18n.global.getPlaceholderComponent(
+        I18n.global.getPlaceholderComponent(
                 I18n.toLocale(sender),
                 player,
                 message,
                 Placeholder.replace("key", args.getRaw("point")),
                 Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
                 Placeholder.replace("player-name", player.getName())
-        ));
-        player.sendMessage(I18n.global.getPlaceholderComponent(player.locale(), player, receiverMessage,
+        ).sendMessage(sender);
+        I18n.global.getPlaceholderComponent(player.locale(), player, receiverMessage,
                 Placeholder.replace("key", args.getRaw("point")),
-                Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))));
+                Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))
+                ).sendMessage(player);
     }
 
     @FunctionalInterface
@@ -149,23 +151,23 @@ public class InfPointsCommand {
 
     private void hasPermission(CommandSender sender, String permission) throws WrapperCommandSyntaxException{
         if (!sender.hasPermission(permission))
-            throw CommandAPIBukkit.failWithAdventureComponent(I18n.global.getPlaceholderComponent(
+            throw CommandAPIBukkit.failWithBaseComponents(I18n.global.getPlaceholderComponent(
                     I18n.toLocale(sender),
                     sender,
                     "error-permissions"
-            ));
+            ).bungee());
     }
 
     private String getPointKey(CommandSender sender, CommandArguments args) throws WrapperCommandSyntaxException {
         String point = args.getOrDefaultRaw("point", "");
 
         if (!pointManager.getPoints().containsKey(point))
-            throw CommandAPIBukkit.failWithAdventureComponent(I18n.global.getPlaceholderComponent(
+            throw CommandAPIBukkit.failWithBaseComponents(I18n.global.getPlaceholderComponent(
                     I18n.toLocale(sender),
                     sender,
                     "error-point-not-found",
                     Placeholder.replace("key", point)
-            ));
+            ).bungee());
 
         return point;
     }
@@ -174,12 +176,12 @@ public class InfPointsCommand {
         String point = args.getOrDefaultRaw("point", "");
 
         if (!pointManager.getPoints().containsKey(point))
-            throw CommandAPIBukkit.failWithAdventureComponent(I18n.global.getPlaceholderComponent(
+            throw CommandAPIBukkit.failWithBaseComponents(I18n.global.getPlaceholderComponent(
                     I18n.toLocale(sender),
                     sender,
                     "error-point-not-found",
                     Placeholder.replace("key", point)
-            ));
+            ).bungee());
 
         return pointManager.getPoints().get(point);
     }
