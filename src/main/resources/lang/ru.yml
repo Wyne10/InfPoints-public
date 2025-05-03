@@ -3,6 +3,7 @@
 # Название поинта в множественном числе - %points_<key>_name-plural%
 # Символ поинта - %points_<key>_symbol%
 # Цвет поинта - %points_<key>_color%
+# Цвет поинта в mini message формате - %points_<key>_color-mm%
 # Баланс - %points_<key>_balance%
 # Форматированный баланс - %points_<key>_balance-format%
 # Целочисленный баланс - %points_<key>_balance-int%
@@ -11,11 +12,11 @@
 ### Messages
 
 ## Info
-info-point-balance: "<green>У вас есть %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
-info-point-balance-other: "<green>Игрок '%player_name%' имеет %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
-info-balance-set: "<green>Ваш баланс установлен на %points_<key>_color%<amount>%points_<key>_symbol%"
-info-balance-add: "<green>Ваш баланс пополнен на %points_<key>_color%<amount>%points_<key>_symbol%"
-info-balance-sub: "<red>С вашего баланса снято %points_<key>_color%<amount>%points_<key>_symbol%"
+info-point-balance: "<green>У вас есть %points_<key>_color-mm%%points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "<green>Игрок '%player_name%' имеет %points_<key>_color-mm%%points_<key>_balance%%points_<key>_symbol%"
+info-balance-set: "<green>Ваш баланс установлен на %points_<key>_color-mm%<amount>%points_<key>_symbol%"
+info-balance-add: "<green>Ваш баланс пополнен на %points_<key>_color-mm%<amount>%points_<key>_symbol%"
+info-balance-sub: "<red>С вашего баланса снято %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-help:
   - "Help"
 
@@ -27,7 +28,7 @@ error-permissions: "<red>Недостаточно прав для исполне
 
 ## Success
 success-plugin-reload: "<green>Плагин перезагружен!"
-success-point-set: "<green>Установлено %points_<key>_color%<amount>%points_<key>_symbol% <green>игроку '<player-name>'"
-success-point-add: "<green>Добавлено %points_<key>_color%<amount>%points_<key>_symbol% <green>игроку '<player-name>'"
-success-point-sub: "<green>Вычтено %points_<key>_color%<amount>%points_<key>_symbol% <green>игрока '<player-name>'"
-success-point-pay: "<green>Переведено %points_<key>_color%<amount>%points_<key>_symbol% игроку '<player-name>'"
+success-point-set: "<green>Установлено %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>игроку '<player-name>'"
+success-point-add: "<green>Добавлено %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>игроку '<player-name>'"
+success-point-sub: "<green>Вычтено %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>игрока '<player-name>'"
+success-point-pay: "<green>Переведено %points_<key>_color-mm%<amount>%points_<key>_symbol% игроку '<player-name>'"

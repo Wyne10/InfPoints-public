@@ -28,7 +28,7 @@ point:
     # Название поинта во множественном числе (%points_<key>_name-plural%)
     namePlural: 'Монеты'
 
-    # Цвет поинта (%points_<key>_color%)
+    # Цвет поинта, только в legacy формате (%points_<key>_color%)
     color: '&6'
 
     # Символ поинта (%points_<key>_symbol%)

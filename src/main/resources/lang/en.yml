@@ -3,6 +3,7 @@
 # Plural point name - %points_<key>_name-plural%
 # Point symbol- %points_<key>_symbol%
 # Point color - %points_<key>_color%
+# Point color mini message format - %points_<key>_color-mm%
 # Balance - %points_<key>_balance%
 # Formatted balance - %points_<key>_balance-format%
 # Integer balance - %points_<key>_balance-int%
@@ -11,11 +12,11 @@
 ### Messages
 
 ## Info
-info-point-balance: "<green>You have %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
-info-point-balance-other: "<green>Player '%player_name%' has %points_<key>_color%%points_<key>_balance%%points_<key>_symbol%"
-info-balance-set: "<green>Your balance is set to %points_<key>_color%<amount>%points_<key>_symbol%"
-info-balance-add: "<green>Your balance has been replenished by %points_<key>_color%<amount>%points_<key>_symbol%"
-info-balance-sub: "%points_<key>_color%<amount>%points_<key>_symbol% <red>have been withdrawn from your balance"
+info-point-balance: "<green>You have %points_<key>_color-mm%%points_<key>_balance%%points_<key>_symbol%"
+info-point-balance-other: "<green>Player '%player_name%' has %points_<key>_color-mm%%points_<key>_balance%%points_<key>_symbol%"
+info-balance-set: "<green>Your balance is set to %points_<key>_color-mm%<amount>%points_<key>_symbol%"
+info-balance-add: "<green>Your balance has been replenished by %points_<key>_color-mm%<amount>%points_<key>_symbol%"
+info-balance-sub: "%points_<key>_color-mm%<amount>%points_<key>_symbol% <red>have been withdrawn from your balance"
 info-help:
   - "Help"
 
@@ -27,7 +28,7 @@ error-permissions: "<red>Not enough permissions to execute this command!"
 
 ## Success
 success-plugin-reload: "<green>Plugin reloaded!"
-success-point-set: "<green>Set %points_<key>_color%<amount>%points_<key>_symbol% <green>to '<player-name>'"
-success-point-add: "<green>Added %points_<key>_color%<amount>%points_<key>_symbol% <green>to '<player-name>'"
-success-point-sub: "<green>Subtracted %points_<key>_color%<amount>%points_<key>_symbol% <green>from '<player-name>'"
-success-point-pay: "<green>Payed %points_<key>_color%<amount>%points_<key>_symbol% <green>to '<player-name>'"
+success-point-set: "<green>Set %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>'"
+success-point-add: "<green>Added %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>'"
+success-point-sub: "<green>Subtracted %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>from '<player-name>'"
+success-point-pay: "<green>Payed %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>'"
