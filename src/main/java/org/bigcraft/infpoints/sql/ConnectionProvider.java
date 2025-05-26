@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import me.wyne.wutils.jdbc.ConnectionPool;
 import me.wyne.wutils.jdbc.OrmLiteConnectionPool;
-import me.wyne.wutils.log.Log;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.config.SqlConfig;
 
@@ -27,7 +26,7 @@ public class ConnectionProvider {
 
     public void reloadConnectionPool() {
         if (!config.isConfigured()) {
-            Log.global.warn("SQL connection is not configured");
+            InfPoints.getInstance().getLog().warn("SQL connection is not configured");
             return;
         }
         if (connectionPool != null)

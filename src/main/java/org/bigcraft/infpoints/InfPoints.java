@@ -6,6 +6,7 @@ import com.j256.ormlite.logger.Logger;
 import lombok.Getter;
 import me.wyne.wutils.config.Config;
 import me.wyne.wutils.i18n.I18n;
+import me.wyne.wutils.i18n.language.component.BukkitComponentAudience;
 import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
 import me.wyne.wutils.i18n.language.validation.EmptyValidator;
 import me.wyne.wutils.jdbc.DriverLibrary;
@@ -54,7 +55,7 @@ public class InfPoints extends JavaPlugin {
                     new ApiModule()
             );
         } catch (CreationException e) {
-            Log.global.exception("Guice injector creation exception", e);
+            log.error("Guice injector creation exception", e);
         }
 
         initializeConfig();
@@ -65,7 +66,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(PointManager.class).implementVault();
             JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
-            Log.global.exception("Guice configuration/provision exception", e);
+            log.error("Guice configuration/provision exception", e);
         }
     }
 
@@ -74,10 +75,8 @@ public class InfPoints extends JavaPlugin {
         try {
             injector.getInstance(ConnectionProvider.class).close();
             JsonRegistry.global.write();
-            if (I18n.global.audiences != null)
-                I18n.global.audiences.close();
         } catch (ConfigurationException | ProvisionException e) {
-            Log.global.exception("Guice configuration/provision exception", e);
+            log.error("Guice configuration/provision exception", e);
         }
     }
 
@@ -113,8 +112,7 @@ public class InfPoints extends JavaPlugin {
     private void initializeI18n()
     {
         I18n.global.log = log;
-        if (I18n.global.audiences == null)
-            I18n.global.audiences = BukkitAudiences.create(this);
+        I18n.global.audiences = new BukkitComponentAudience(BukkitAudiences.create(this));
         I18n.global.clearLanguageMap();
         I18n.global.loadLanguage("lang/ru.yml", this);
         I18n.global.loadLanguage("lang/en.yml", this);
@@ -122,7 +120,7 @@ public class InfPoints extends JavaPlugin {
         I18n.global.loadLanguages(this);
         I18n.global.setDefaultLanguage(I18n.global.getDefaultLanguageCode(this));
         I18n.global.setComponentInterpreter(ComponentInterpreters.valueOf(getConfig().getString("serializer", "LEGACY")).get(new EmptyValidator()));
-        I18n.global.setUsePlayerLanguage(getConfig().getBoolean("usePlayerLanguage", true));
+        I18n.global.usePlayerLanguage = getConfig().getBoolean("usePlayerLanguage", true);
     }
 
     private void initializeJson()
@@ -146,7 +144,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(PointManager.class).loadPoints();
             injector.getInstance(PointManager.class).implementVault();
         } catch (ConfigurationException | ProvisionException e) {
-            Log.global.exception("Guice configuration/provision exception", e);
+            log.error("Guice configuration/provision exception", e);
         }
     }
 

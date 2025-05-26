@@ -6,7 +6,6 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.wyne.wutils.common.Args;
 import me.wyne.wutils.common.placeholder.PAPIUtils;
 import me.wyne.wutils.i18n.I18n;
-import me.wyne.wutils.log.Log;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.core.Point;
 import org.bigcraft.infpoints.core.PointManager;
@@ -54,12 +53,12 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         String data = args.get(1);
 
         if (args.size() < 2) {
-            Log.global.error("Not enough arguments for points placeholder. Required: 2");
+            InfPoints.getInstance().getLog().error("Not enough arguments for points placeholder. Required: 2");
             return null;
         }
 
         if (!pointManager.getPoints().containsKey(pointKey)) {
-            Log.global.error("Point '" + pointKey + "' doesn't exist (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
+            InfPoints.getInstance().getLog().error("Point '{}' doesn't exist ({})", pointKey, PAPIUtils.getPlaceholder(getIdentifier(), params));
             return null;
         }
 
@@ -77,7 +76,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
             case "balance-int-format": return formatNumber(String.valueOf((int) point.get(player.getUniqueId())));
         }
 
-        Log.global.error("Placeholder '" + data + "' doesn't exist (" + PAPIUtils.getPlaceholder(getIdentifier(), params) + ")");
+        InfPoints.getInstance().getLog().error("Placeholder '{}' doesn't exist ({})", data, PAPIUtils.getPlaceholder(getIdentifier(), params));
         return null;
     }
 

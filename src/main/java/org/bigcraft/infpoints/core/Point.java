@@ -1,6 +1,7 @@
 package org.bigcraft.infpoints.core;
 
 import lombok.Getter;
+import me.wyne.wutils.i18n.language.interpretation.LegacyInterpreter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bigcraft.infpoints.api.config.CommandConfig;
@@ -20,7 +21,7 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
     public Point(ConfigurationSection config) {
         this.config = org.bigcraft.infpoints.api.config.PointConfig.fromConfig(config);
         this.visualConfig = VisualConfig.fromConfig(config);
-        this.colorMiniMessage = MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(visualConfig.color()));
+        this.colorMiniMessage = MiniMessage.miniMessage().serialize(LegacyInterpreter.SERIALIZER.deserialize(visualConfig.color()));
         this.commandConfig = CommandConfig.fromConfig(config);
     }
 
