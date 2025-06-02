@@ -138,11 +138,11 @@ public class InfPoints extends JavaPlugin {
         initializeI18n();
         try {
             JsonRegistry.global.write();
-            JsonRegistry.global.load();
             DriverLibrary.valueOf(injector.getInstance(SqlConfig.class).getDriver()).registerDriver();
             injector.getInstance(ConnectionProvider.class).reloadConnectionPool();
             injector.getInstance(PointManager.class).loadPoints();
             injector.getInstance(PointManager.class).implementVault();
+            JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
             log.error("Guice configuration/provision exception", e);
         }
