@@ -21,6 +21,7 @@ info-help:
   - "Help"
 
 ## Error
+error-player-not-found: "<red>Player '<name>' not found!"
 error-point-not-found: "<red>Point '<key>' doesn't exist!"
 error-insufficient-funds: "<red>Insufficient funds!"
 error-pay-self: "<red>Can't pay to yourself!"

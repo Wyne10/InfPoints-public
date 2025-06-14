@@ -11,13 +11,18 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SqlPoint extends Point {
 
     private Dao<PointEntity, UUID> pointDao;
 
+    private final ExecutorService executor;
+
     public SqlPoint(ConfigurationSection config, JdbcPooledConnectionSource connectionSource) {
         super(config);
+        executor = Executors.newCachedThreadPool();
         try {
             DatabaseTableConfig<PointEntity> tableConfig = DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), PointEntity.class);
             tableConfig.setTableName(getConfig().key());
@@ -38,9 +43,11 @@ public class SqlPoint extends Point {
 
     @Override
     public void set(UUID player, double amount) {
-        getEntity(player)
-                .ifPresentOrElse(entity -> update(entity, amount),
-                        () -> create(player, amount));
+        executor.execute(() -> {
+            getEntity(player)
+                    .ifPresentOrElse(entity -> update(entity, amount),
+                            () -> create(player, amount));
+        });
     }
 
     private Optional<PointEntity> getEntity(UUID uuid) {

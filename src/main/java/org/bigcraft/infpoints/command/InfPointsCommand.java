@@ -13,9 +13,12 @@ import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.api.PointType;
 import org.bigcraft.infpoints.core.Point;
 import org.bigcraft.infpoints.core.PointManager;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 @Singleton
@@ -50,10 +53,19 @@ public class InfPointsCommand {
                                             Placeholder.replace("key", point)
                                     ).sendMessage(sender);
                                 })
-                                .then(new EntitySelectorArgument.OnePlayer("target")
+                                .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
                                         .executes((sender, args) -> {
                                             hasPermission(sender, "points.balance-other." + getPointKey(sender, args));
-                                            Player player = args.getByClass("target", Player.class);
+                                            UUID uuid = Bukkit.getPlayerUniqueId(args.getByClass("target", String.class));
+                                            if (uuid == null)
+                                                throw CommandAPIBukkit.failWithBaseComponents(I18n.global.getPlaceholderComponent(
+                                                        I18n.toLocale(sender),
+                                                        sender,
+                                                        "error-player-not-found",
+                                                        Placeholder.replace("name", args.getByClass("target", String.class))
+                                                ).bungee());
+
+                                            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
                                             String point = getPointKey(sender, args);
                                             I18n.global.getPlaceholderComponent(
                                                     I18n.toLocale(sender),
@@ -64,25 +76,26 @@ public class InfPointsCommand {
                                 })))
                         .then(new LiteralArgument("set").executes(InfPointsCommand::sendHelp)
                                 .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
-                                        .then(new EntitySelectorArgument.OnePlayer("target")
+                                        .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.set.", "success-point-set", "info-balance-set", PointType::set);
                                                 }))))
                         .then(new LiteralArgument("add").executes(InfPointsCommand::sendHelp)
                                 .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
-                                        .then(new EntitySelectorArgument.OnePlayer("target")
+                                        .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.add.", "success-point-add", "info-balance-add", PointType::add);
                                                 }))))
                         .then(new LiteralArgument("sub").executes(InfPointsCommand::sendHelp)
                                 .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
-                                        .then(new EntitySelectorArgument.OnePlayer("target")
+                                        .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.sub.", "success-point-sub", "info-balance-sub", PointType::subtract);
                                                 }))))
                         .then(new LiteralArgument("pay").executes(InfPointsCommand::sendHelp)
                                 .then(new IntegerArgument("amount", 1).executes(InfPointsCommand::sendHelp)
-                                        .then(new EntitySelectorArgument.OnePlayer("target")
+                                        .then(new PlayerArgument("target")
+                                                .replaceSafeSuggestions(SafeSuggestions.suggest(info -> Bukkit.getOnlinePlayers().toArray(Player[]::new)))
                                                 .executesPlayer((sender, args) -> {
                                                     hasPermission(sender, "points.pay." + getPointKey(sender, args));
                                                     Player player = args.getByClass("target", Player.class);
@@ -126,7 +139,16 @@ public class InfPointsCommand {
 
     private void addSetSub(CommandSender sender, CommandArguments args, String permission, String message, String receiverMessage, AddSetSub operation) throws WrapperCommandSyntaxException {
         hasPermission(sender, permission + getPointKey(sender, args));
-        Player player = args.getByClass("target", Player.class);
+        UUID uuid = Bukkit.getPlayerUniqueId(args.getByClass("target", String.class));
+        if (uuid == null)
+            throw CommandAPIBukkit.failWithBaseComponents(I18n.global.getPlaceholderComponent(
+                    I18n.toLocale(sender),
+                    sender,
+                    "error-player-not-found",
+                    Placeholder.replace("name", args.getByClass("target", String.class))
+            ).bungee());
+
+        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
         double amount = args.getByClassOrDefault("amount", Double.class, 0D);
         Point point = getPoint(sender, args);
         operation.execute(point, player.getUniqueId(), amount);
@@ -138,10 +160,10 @@ public class InfPointsCommand {
                 Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
                 Placeholder.replace("player-name", player.getName())
         ).sendMessage(sender);
-        I18n.global.getPlaceholderComponent(player.locale(), player, receiverMessage,
+        I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, receiverMessage,
                 Placeholder.replace("key", args.getRaw("point")),
                 Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))
-                ).sendMessage(player);
+        ).sendMessage(player.getUniqueId());
     }
 
     @FunctionalInterface
@@ -187,7 +209,7 @@ public class InfPointsCommand {
     }
     
     public static void sendHelp(CommandSender sender, CommandArguments args) {
-        sender.sendMessage(I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help"));
+        I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help").sendMessage(sender);
     }
 
 }

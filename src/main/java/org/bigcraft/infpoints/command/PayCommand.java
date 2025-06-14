@@ -2,10 +2,12 @@ package org.bigcraft.infpoints.command;
 
 import dev.jorel.commandapi.CommandAPIBukkit;
 import dev.jorel.commandapi.CommandTree;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.PlayerArgument;
+import dev.jorel.commandapi.arguments.SafeSuggestions;
 import org.bigcraft.infpoints.core.Point;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 public class PayCommand extends PersonalCommand {
 
@@ -19,7 +21,8 @@ public class PayCommand extends PersonalCommand {
                 .executes(InfPointsCommand::sendHelp)
                 .withAliases(getPoint().getCommandConfig().payAliases().toArray(String[]::new))
                 .then(new IntegerArgument("amount", 1).executes(InfPointsCommand::sendHelp)
-                        .then(new EntitySelectorArgument.OnePlayer("target")
+                        .then(new PlayerArgument("target")
+                                .replaceSafeSuggestions(SafeSuggestions.suggest(info -> Bukkit.getOnlinePlayers().toArray(Player[]::new)))
                                 .executes((sender, args) -> {
                                     StringBuilder commandBuilder = new StringBuilder();
                                     commandBuilder.append("points ")

@@ -21,6 +21,7 @@ info-help:
   - "Help"
 
 ## Error
+error-player-not-found: "<red>Игрок '<name>' не найден!"
 error-point-not-found: "<red>Поинт '<key>' не существует!"
 error-insufficient-funds: "<red>Недостаточно средств!"
 error-pay-self: "<red>Нельзя перевести себе!"
