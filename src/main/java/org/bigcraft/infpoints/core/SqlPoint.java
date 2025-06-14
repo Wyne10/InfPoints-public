@@ -5,6 +5,7 @@ import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
 import me.wyne.wutils.log.Log;
+import org.bigcraft.infpoints.InfPoints;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.SQLException;
@@ -29,7 +30,7 @@ public class SqlPoint extends Point {
             if (!pointDao.isTableExists())
                 TableUtils.createTable(pointDao);
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while creating '" + getConfig().key() + "' table", e);
+            InfPoints.getInstance().getLog().error("An exception occurred while creating '{}' table", getConfig().key(), e);
         }
     }
 
@@ -53,7 +54,7 @@ public class SqlPoint extends Point {
         try {
             return Optional.ofNullable(pointDao.queryForId(uuid));
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while querying point entity", e);
+            InfPoints.getInstance().getLog().error("An exception occurred while querying point entity", e);
         }
         return Optional.empty();
     }
@@ -62,7 +63,7 @@ public class SqlPoint extends Point {
         try {
             pointDao.create(new PointEntity(player, balance));
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while creating point entity", e);
+            InfPoints.getInstance().getLog().error("An exception occurred while creating point entity", e);
         }
     }
 
@@ -70,7 +71,7 @@ public class SqlPoint extends Point {
         try {
             pointDao.update(entity.setBalance(balance));
         } catch (SQLException e) {
-            Log.global.exception("An exception occurred while updating point entity", e);
+            InfPoints.getInstance().getLog().error("An exception occurred while updating point entity", e);
         }
     }
 
