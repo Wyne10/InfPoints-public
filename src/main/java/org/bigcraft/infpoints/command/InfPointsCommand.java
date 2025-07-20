@@ -53,7 +53,7 @@ public class InfPointsCommand {
                                             Placeholder.replace("key", point)
                                     ).sendMessage(sender);
                                 })
-                                .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
+                                .then(offlineArgument()
                                         .executes((sender, args) -> {
                                             hasPermission(sender, "points.balance-other." + getPointKey(sender, args));
                                             UUID uuid = Bukkit.getPlayerUniqueId(args.getByClass("target", String.class));
@@ -75,27 +75,26 @@ public class InfPointsCommand {
                                             ).sendMessage(sender);
                                 })))
                         .then(new LiteralArgument("set").executes(InfPointsCommand::sendHelp)
-                                .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
-                                        .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
+                                .then(offlineArgument().executes(InfPointsCommand::sendHelp)
+                                        .then(new DoubleArgument("amount")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.set.", "success-point-set", "info-balance-set", PointType::set);
                                                 }))))
                         .then(new LiteralArgument("add").executes(InfPointsCommand::sendHelp)
-                                .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
-                                        .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
+                                .then(offlineArgument().executes(InfPointsCommand::sendHelp)
+                                        .then(new DoubleArgument("amount")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.add.", "success-point-add", "info-balance-add", PointType::add);
                                                 }))))
                         .then(new LiteralArgument("sub").executes(InfPointsCommand::sendHelp)
-                                .then(new DoubleArgument("amount").executes(InfPointsCommand::sendHelp)
-                                        .then(new StringArgument("target").replaceSuggestions(ArgumentSuggestions.stringCollection(info -> Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()))
+                                .then(offlineArgument().executes(InfPointsCommand::sendHelp)
+                                        .then(new DoubleArgument("amount")
                                                 .executes((sender, args) -> {
                                                     addSetSub(sender, args, "points.sub.", "success-point-sub", "info-balance-sub", PointType::subtract);
                                                 }))))
                         .then(new LiteralArgument("pay").executes(InfPointsCommand::sendHelp)
-                                .then(new IntegerArgument("amount", 1).executes(InfPointsCommand::sendHelp)
-                                        .then(new PlayerArgument("target")
-                                                .replaceSafeSuggestions(SafeSuggestions.suggest(info -> Bukkit.getOnlinePlayers().toArray(Player[]::new)))
+                                .then(targetArgument().executes(InfPointsCommand::sendHelp)
+                                        .then(new IntegerArgument("amount", 1)
                                                 .executesPlayer((sender, args) -> {
                                                     hasPermission(sender, "points.pay." + getPointKey(sender, args));
                                                     Player player = args.getByClass("target", Player.class);
@@ -210,6 +209,20 @@ public class InfPointsCommand {
     
     public static void sendHelp(CommandSender sender, CommandArguments args) {
         I18n.global.getPlaceholderComponent(I18n.toLocale(sender), sender, "info-help").sendMessage(sender);
+    }
+
+    public static Argument<?> targetArgument() {
+        return new PlayerArgument("target")
+                .replaceSafeSuggestions(SafeSuggestions.suggest(info ->
+                        Bukkit.getOnlinePlayers().toArray(new Player[0])
+                ));
+    }
+
+    public static Argument<?> offlineArgument() {
+        return new StringArgument("target")
+                .replaceSuggestions(ArgumentSuggestions.stringCollection(info ->
+                        Arrays.stream(Bukkit.getOfflinePlayers()).map(OfflinePlayer::getName).toList()
+                ));
     }
 
 }
