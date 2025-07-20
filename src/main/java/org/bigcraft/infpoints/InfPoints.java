@@ -37,8 +37,8 @@ public class InfPoints extends JavaPlugin {
         saveDefaultConfig();
         getConfig().setDefaults(new MemoryConfiguration());
 
-        initializeJson();
         initializeLogger();
+        initializeJson();
         initializeI18n();
 
         Logger.setGlobalLogLevel(com.j256.ormlite.logger.Level.INFO);
@@ -55,7 +55,7 @@ public class InfPoints extends JavaPlugin {
                     new ApiModule()
             );
         } catch (CreationException e) {
-            Log.global.exception("Guice injector creation exception", e);
+            log.error("Guice injector creation exception", e);
         }
 
         initializeConfig();
@@ -66,7 +66,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(PointManager.class).implementVault();
             JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
-            Log.global.exception("Guice configuration/provision exception", e);
+            log.error("Guice configuration/provision exception", e);
         }
     }
 
@@ -76,7 +76,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(ConnectionProvider.class).close();
             JsonRegistry.global.write();
         } catch (ConfigurationException | ProvisionException e) {
-            Log.global.exception("Guice configuration/provision exception", e);
+            log.error("Guice configuration/provision exception", e);
         }
     }
 
@@ -84,7 +84,7 @@ public class InfPoints extends JavaPlugin {
     {
         Log.global = Log.builder()
                 .setLogger(getLogger())
-                .setConfig(new ConfigurableLogConfig("Global", Config.global, new BasicLogConfig(true, true, false, true, true, false)))
+                .setLevel(JulLevel.valueOf(getConfig().getString("logLevel", "INFO")).getLevel())
                 .setLogDirectory(new File(getDataFolder(), "log"))
                 .setFileWriteExecutor(Executors.newSingleThreadExecutor())
                 .build();
@@ -93,7 +93,7 @@ public class InfPoints extends JavaPlugin {
         log = Log4jFactory.createLogger(
                 this,
                 Log4jFactory.DEFAULT_FILE_MESSAGE_PATTERN,
-                Level.valueOf(getConfig().getString("log-level", "INFO")),
+                Level.valueOf(getConfig().getString("logLevel", "INFO")),
                 new File(getDataFolder(), "log").getPath(),
                 Log.global
         );
@@ -144,7 +144,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(PointManager.class).loadPoints();
             injector.getInstance(PointManager.class).implementVault();
         } catch (ConfigurationException | ProvisionException e) {
-            Log.global.exception("Guice configuration/provision exception", e);
+            log.error("Guice configuration/provision exception", e);
         }
     }
 

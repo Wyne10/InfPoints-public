@@ -4,7 +4,7 @@ usePlayerLanguage: true
 # LEGACY/ENHANCED_LEGACY/MINI_MESSAGE
 serializer: MINI_MESSAGE
 # OFF/FATAL/ERROR/WARN/INFO/DEBUG/TRACE/ALL
-log-level: INFO
+logLevel: INFO
 
 implementVault: false
 vault: primary
