@@ -55,7 +55,7 @@ public class InfPoints extends JavaPlugin {
                     new ApiModule()
             );
         } catch (CreationException e) {
-            log.error("Guice injector creation exception", e);
+            Log.global.exception("Guice injector creation exception", e);
         }
 
         initializeConfig();
@@ -66,7 +66,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(PointManager.class).implementVault();
             JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
-            log.error("Guice configuration/provision exception", e);
+            Log.global.exception("Guice configuration/provision exception", e);
         }
     }
 
@@ -76,7 +76,7 @@ public class InfPoints extends JavaPlugin {
             injector.getInstance(ConnectionProvider.class).close();
             JsonRegistry.global.write();
         } catch (ConfigurationException | ProvisionException e) {
-            log.error("Guice configuration/provision exception", e);
+            Log.global.exception("Guice configuration/provision exception", e);
         }
     }
 
@@ -119,7 +119,7 @@ public class InfPoints extends JavaPlugin {
         I18n.global.loadDefaultResourceLanguage(this);
         I18n.global.loadLanguages(this);
         I18n.global.setDefaultLanguage(I18n.global.getDefaultLanguageCode(this));
-        I18n.global.setComponentInterpreter(ComponentInterpreters.valueOf(getConfig().getString("serializer", "LEGACY")).get(new EmptyValidator()));
+        I18n.global.setComponentInterpreter(ComponentInterpreters.valueOf(getConfig().getString("serializer", "MINI_MESSAGE")).get(new EmptyValidator()));
         I18n.global.usePlayerLanguage = getConfig().getBoolean("usePlayerLanguage", true);
     }
 
@@ -138,13 +138,13 @@ public class InfPoints extends JavaPlugin {
         initializeI18n();
         try {
             JsonRegistry.global.write();
+            JsonRegistry.global.load();
             DriverLibrary.valueOf(injector.getInstance(SqlConfig.class).getDriver()).registerDriver();
             injector.getInstance(ConnectionProvider.class).reloadConnectionPool();
             injector.getInstance(PointManager.class).loadPoints();
             injector.getInstance(PointManager.class).implementVault();
-            JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
-            log.error("Guice configuration/provision exception", e);
+            Log.global.exception("Guice configuration/provision exception", e);
         }
     }
 
