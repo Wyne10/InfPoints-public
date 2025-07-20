@@ -4,7 +4,6 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
-import me.wyne.wutils.log.Log;
 import org.bigcraft.infpoints.InfPoints;
 import org.bukkit.configuration.ConfigurationSection;
 

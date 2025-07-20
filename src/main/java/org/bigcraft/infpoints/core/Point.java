@@ -3,7 +3,6 @@ package org.bigcraft.infpoints.core;
 import lombok.Getter;
 import me.wyne.wutils.i18n.language.interpretation.LegacyInterpreter;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bigcraft.infpoints.api.config.CommandConfig;
 import org.bigcraft.infpoints.api.config.VisualConfig;
 import org.bukkit.configuration.ConfigurationSection;
