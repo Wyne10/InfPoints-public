@@ -14,6 +14,10 @@ public class MemoryPoint extends Point {
         super(config);
     }
 
+    public MemoryPoint(Point point) {
+        super(point);
+    }
+
     @Override
     public double get(UUID player) {
         return balance.getOrDefault(player, getConfig().defaultBalance());

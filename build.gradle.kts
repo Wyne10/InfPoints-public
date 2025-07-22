@@ -21,6 +21,7 @@ dependencies {
     implementation(project(":api"))
     implementation(libs.guice)
     implementation(libs.ormLiteJdbc)
+    implementation(libs.hikari)
     implementation(libs.adventureMini)
     implementation(libs.adventureBukkit)
 
@@ -40,6 +41,7 @@ tasks {
         relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
         relocate("com.google.common", "org.bigcraft.infpoints.shadow.google.common")
         relocate("com.j256.ormlite", "org.bigcraft.infpoints.shadow.j256.ormlite")
+        relocate("com.zaxxer.hikari", "org.bigcraft.infpoints.shadow.zaxxer.hikari")
         relocate("net.kyori", "org.bigcraft.infpoints.shadow.net.kyori")
         relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")
     }
