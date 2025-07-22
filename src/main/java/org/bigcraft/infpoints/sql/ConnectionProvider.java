@@ -2,11 +2,11 @@ package org.bigcraft.infpoints.sql;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
+import com.j256.ormlite.support.ConnectionSource;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import me.wyne.wutils.jdbc.ConnectionPool;
-import me.wyne.wutils.jdbc.OrmLiteConnectionPool;
+import me.wyne.wutils.jdbc.HikariOrmLiteConnectionPool;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.config.SqlConfig;
 
@@ -14,7 +14,7 @@ import org.bigcraft.infpoints.config.SqlConfig;
 @Getter
 public class ConnectionProvider {
 
-    private ConnectionPool<JdbcPooledConnectionSource> connectionPool;
+    private ConnectionPool<ConnectionSource> connectionPool;
 
     private final SqlConfig config;
 
@@ -29,9 +29,8 @@ public class ConnectionProvider {
             InfPoints.getInstance().getLog().warn("SQL connection is not configured");
             return;
         }
-        if (connectionPool != null)
-            close();
-        this.connectionPool = new OrmLiteConnectionPool(config.getJdbcUrl(), config.getUsername(), config.getPassword(), InfPoints.getInstance().getLog());
+        close();
+        this.connectionPool = new HikariOrmLiteConnectionPool(config.getJdbcUrl(), config.getUsername(), config.getPassword(), InfPoints.getInstance().getLog());
     }
 
     public boolean isActive() {
