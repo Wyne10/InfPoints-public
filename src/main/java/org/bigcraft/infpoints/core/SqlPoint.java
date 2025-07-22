@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class SqlPoint extends Point {
+public class SqlPoint extends Point implements AutoCloseable {
 
     private final MemoryPoint pointCache;
     private Dao<PointEntity, UUID> pointDao;
@@ -75,6 +75,11 @@ public class SqlPoint extends Point {
         } catch (SQLException e) {
             InfPoints.getInstance().getLog().error("An exception occurred while updating point entity", e);
         }
+    }
+
+    @Override
+    public void close() {
+        executor.shutdown();
     }
 
 }

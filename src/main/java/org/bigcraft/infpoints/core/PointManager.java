@@ -66,6 +66,15 @@ public class PointManager implements PointProvider {
     }
 
     public void loadPoints() {
+        points.values().stream()
+                .filter(point -> point instanceof AutoCloseable)
+                .forEach(point -> {
+                    try {
+                        ((AutoCloseable)point).close();
+                    } catch (Exception e) {
+                        plugin.getLog().error("An exception occurred trying to close point '{}'", point.getConfig().key(), e);
+                    }
+                });
         points.clear();
         personalCommands.forEach(PersonalCommand::unregister);
         personalCommands.clear();
