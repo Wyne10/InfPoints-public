@@ -10,6 +10,8 @@ import org.bukkit.configuration.ConfigurationSection;
 import java.sql.SQLException;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class SqlPoint extends Point implements AutoCloseable {
 
