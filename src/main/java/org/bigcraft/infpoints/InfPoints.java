@@ -73,6 +73,7 @@ public class InfPoints extends JavaPlugin {
     @Override
     public void onDisable() {
         try {
+            injector.getInstance(PointManager.class).close();
             injector.getInstance(ConnectionProvider.class).close();
             JsonRegistry.global.write();
         } catch (ConfigurationException | ProvisionException e) {
