@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Singleton
-public class PointManager implements PointProvider {
+public class PointManager implements PointProvider, AutoCloseable {
 
     private final static String[] permissions = {"points.balance.", "points.balance-other.", "points.set.", "points.add.", "points.sub.", "points.pay."};
 
@@ -66,15 +66,6 @@ public class PointManager implements PointProvider {
     }
 
     public void loadPoints() {
-        points.values().stream()
-                .filter(point -> point instanceof AutoCloseable)
-                .forEach(point -> {
-                    try {
-                        ((AutoCloseable)point).close();
-                    } catch (Exception e) {
-                        plugin.getLog().error("An exception occurred trying to close point '{}'", point.getConfig().key(), e);
-                    }
-                });
         points.clear();
         personalCommands.forEach(PersonalCommand::unregister);
         personalCommands.clear();
@@ -103,6 +94,19 @@ public class PointManager implements PointProvider {
     public void implementVault() {
         if (plugin.getConfig().getBoolean("implementVault") && points.containsKey(plugin.getConfig().getString("vault", "")))
             Bukkit.getServicesManager().register(Economy.class, new VaultEconomy((Point) getPoint(plugin.getConfig().getString("vault"))), plugin, ServicePriority.Normal);
+    }
+
+    @Override
+    public void close() {
+        points.values().stream()
+                .filter(point -> point instanceof AutoCloseable)
+                .forEach(point -> {
+                    try {
+                        ((AutoCloseable)point).close();
+                    } catch (Exception e) {
+                        plugin.getLog().error("An exception occurred trying to close point '{}'", point.getConfig().key(), e);
+                    }
+                });
     }
 
 }
