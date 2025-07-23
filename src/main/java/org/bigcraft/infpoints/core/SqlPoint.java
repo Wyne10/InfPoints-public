@@ -4,6 +4,7 @@ import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.DatabaseTableConfig;
 import com.j256.ormlite.table.TableUtils;
+import lombok.SneakyThrows;
 import org.bigcraft.infpoints.InfPoints;
 import org.bukkit.configuration.ConfigurationSection;
 
@@ -12,6 +13,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class SqlPoint extends Point implements AutoCloseable {
 
@@ -77,9 +79,12 @@ public class SqlPoint extends Point implements AutoCloseable {
         }
     }
 
+    @SneakyThrows
     @Override
     public void close() {
         executor.shutdown();
+        if (!executor.awaitTermination(60, TimeUnit.SECONDS))
+            executor.shutdownNow();
     }
 
 }

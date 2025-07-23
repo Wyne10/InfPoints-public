@@ -139,6 +139,7 @@ public class InfPoints extends JavaPlugin {
         try {
             JsonRegistry.global.write();
             JsonRegistry.global.clear();
+            injector.getInstance(PointManager.class).close();
             DriverLibrary.valueOf(injector.getInstance(SqlConfig.class).getDriver()).registerDriver();
             injector.getInstance(ConnectionProvider.class).reloadConnectionPool();
             injector.getInstance(PointManager.class).loadPoints();
