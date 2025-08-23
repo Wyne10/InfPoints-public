@@ -41,8 +41,6 @@ public class InfPoints extends JavaPlugin {
         initializeJson();
         initializeI18n();
 
-        Logger.setGlobalLogLevel(com.j256.ormlite.logger.Level.INFO);
-
         try {
             injector =  Guice.createInjector(
                     Stage.PRODUCTION,
@@ -83,6 +81,7 @@ public class InfPoints extends JavaPlugin {
 
     private void initializeLogger()
     {
+        Logger.setGlobalLogLevel(com.j256.ormlite.logger.Level.INFO);
         Log.global = Log.builder()
                 .setLogger(getLogger())
                 .setLevel(JulLevel.valueOf(getConfig().getString("logLevel", "INFO")).getLevel())
@@ -98,6 +97,7 @@ public class InfPoints extends JavaPlugin {
                 new File(getDataFolder(), "log").getPath(),
                 Log.global
         );
+        DriverLibrary.logger = log;
     }
 
     private void initializeConfig()
