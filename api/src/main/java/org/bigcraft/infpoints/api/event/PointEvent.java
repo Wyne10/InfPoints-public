@@ -49,6 +49,14 @@ public abstract class PointEvent extends Event implements Cancellable {
         return amount;
     }
 
+    public double getBalance() {
+        return pointType.get(player);
+    }
+
+    public double getNewBalance() {
+        return pointType.get(player) + amount;
+    }
+
     public PointEventType getType() {
         return type;
     }
