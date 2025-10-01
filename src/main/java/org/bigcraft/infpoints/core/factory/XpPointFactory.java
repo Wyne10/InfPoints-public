@@ -10,6 +10,7 @@ import org.bigcraft.infpoints.core.XpPoint;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLevelChangeEvent;
 
@@ -30,9 +31,10 @@ public class XpPointFactory implements PointFactory, Listener {
         return xpPoint;
     }
 
-    @EventHandler(ignoreCancelled = true)
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     private void onLevelChange(PlayerLevelChangeEvent e) {
         if (xpPoint == null) return;
+        e.getPlayer().setLevel(e.getOldLevel());
         PointEvent event;
         int newLevel = e.getNewLevel();
         int amount;
@@ -44,16 +46,18 @@ public class XpPointFactory implements PointFactory, Listener {
             event = PointEventType.SUBTRACT.call(xpPoint, xpPoint, e.getPlayer().getUniqueId(), amount);
         } else return;
 
-        if (!event.callEvent())
-            newLevel = e.getOldLevel();
-        else {
-            if (((int) event.getAmount()) == amount) return;
+        if (event.callEvent()) {
+            if (((int) event.getAmount()) == amount) {
+                e.getPlayer().setLevel(newLevel);
+                return;
+            }
+
             if (newLevel > e.getOldLevel())
                 newLevel = e.getOldLevel() + (int) event.getAmount();
             else if (newLevel < e.getOldLevel())
                 newLevel = e.getOldLevel() - (int) event.getAmount();
+            e.getPlayer().setLevel(newLevel);
         }
-        e.getPlayer().setLevel(newLevel);
     }
 
 }
