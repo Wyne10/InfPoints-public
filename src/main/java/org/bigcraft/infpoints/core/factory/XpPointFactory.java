@@ -35,15 +35,19 @@ public class XpPointFactory implements PointFactory, Listener {
         if (xpPoint == null) return;
         PointEvent event;
         int newLevel = e.getNewLevel();
+        int amount;
         if (newLevel > e.getOldLevel()) {
-            event = PointEventType.ADD.call(xpPoint, xpPoint, e.getPlayer().getUniqueId(), newLevel - e.getOldLevel());
+            amount = newLevel - e.getOldLevel();
+            event = PointEventType.ADD.call(xpPoint, xpPoint, e.getPlayer().getUniqueId(), amount);
         } else if (newLevel < e.getOldLevel()) {
-            event = PointEventType.SUBTRACT.call(xpPoint, xpPoint, e.getPlayer().getUniqueId(), e.getOldLevel() - newLevel);
+            amount = e.getOldLevel() - newLevel;
+            event = PointEventType.SUBTRACT.call(xpPoint, xpPoint, e.getPlayer().getUniqueId(), amount);
         } else return;
 
         if (!event.callEvent())
             newLevel = e.getOldLevel();
         else {
+            if (((int) event.getAmount()) == amount) return;
             if (newLevel > e.getOldLevel())
                 newLevel = e.getOldLevel() + (int) event.getAmount();
             else if (newLevel < e.getOldLevel())
