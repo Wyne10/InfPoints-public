@@ -17,6 +17,7 @@ info-point-balance-other: "<green>Игрок '%player_name%' имеет %points_
 info-balance-set: "<green>Ваш баланс установлен на %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-balance-add: "<green>Ваш баланс пополнен на %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-balance-sub: "<red>С вашего баланса снято %points_<key>_color-mm%<amount>%points_<key>_symbol%"
+info-point-receive: "<green>Получено %points_<key>_color-mm%<amount>%points_<key>_symbol% от игрока '%player_name%'"
 info-help:
   - "Help"
 

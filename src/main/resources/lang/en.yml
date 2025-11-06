@@ -17,6 +17,7 @@ info-point-balance-other: "<green>Player '%player_name%' has %points_<key>_color
 info-balance-set: "<green>Your balance is set to %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-balance-add: "<green>Your balance has been replenished by %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-balance-sub: "%points_<key>_color-mm%<amount>%points_<key>_symbol% <red>have been withdrawn from your balance"
+info-point-receive: "<green>Received %points_<key>_color-mm%<amount>%points_<key>_symbol% from '%player_name%'"
 info-help:
   - "Help"
 

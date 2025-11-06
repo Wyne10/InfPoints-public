@@ -116,7 +116,7 @@ public class InfPointsCommand {
                                                                 "error-insufficient-funds",
                                                                 Placeholder.replace("key", args.getRaw("point"))
                                                         ).sendMessage(sender);
-                                                    else
+                                                    else {
                                                         I18n.global.getPlaceholderComponent(
                                                                 sender.locale(),
                                                                 sender,
@@ -125,6 +125,14 @@ public class InfPointsCommand {
                                                                 Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
                                                                 Placeholder.replace("player-name", player.getName())
                                                         ).sendMessage(sender);
+                                                        I18n.global.getPlaceholderComponent(
+                                                                I18n.toLocale(player),
+                                                                sender,
+                                                                "info-point-receive",
+                                                                Placeholder.replace("key", args.getRaw("point")),
+                                                                Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))
+                                                        ).sendMessage(player);
+                                                    }
                                         })))))
                 .then(new LiteralArgument("reload")
                         .withPermission("points.admin.reload")
