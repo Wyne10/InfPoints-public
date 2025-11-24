@@ -126,7 +126,7 @@ public class InfPointsCommand {
                                                                 Placeholder.replace("player-name", player.getName())
                                                         ).sendMessage(sender);
                                                         I18n.global.getPlaceholderComponent(
-                                                                I18n.toLocale(player),
+                                                                player.locale(),
                                                                 sender,
                                                                 "info-point-receive",
                                                                 Placeholder.replace("key", args.getRaw("point")),

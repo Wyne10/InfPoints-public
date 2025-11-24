@@ -8,6 +8,7 @@ import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.api.PointConfig;
 import org.bigcraft.infpoints.api.PointProvider;
 import org.bigcraft.infpoints.api.PointType;
+import org.bigcraft.infpoints.api.PointView;
 import org.bigcraft.infpoints.command.BalanceCommand;
 import org.bigcraft.infpoints.command.PayCommand;
 import org.bigcraft.infpoints.command.PersonalCommand;
@@ -52,6 +53,14 @@ public class PointManager implements PointProvider, AutoCloseable {
     @Override
     @Nullable
     public PointType getPointType(String key) {
+        if (!points.containsKey(key))
+            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
+        return points.get(key);
+    }
+
+    @Override
+    @Nullable
+    public PointView getPointView(String key) {
         if (!points.containsKey(key))
             throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
         return points.get(key);
