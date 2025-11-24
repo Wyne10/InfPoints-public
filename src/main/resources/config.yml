@@ -15,7 +15,8 @@ point:
     # MEMORY - Сохранение в памяти (Очищается после перезагрузки плагина)
     # JSON - Сохранение в JSON
     # PDC - Сохранение в PersistentDataContainer игрока
-    # XP - Сохранение в уровень опыта игрока (Поинт такого типа может быть только один)
+    # LEVEL - Сохранение в уровень опыта игрока (Поинт такого типа может быть только один)
+    # EXP - Сохранение в очки опыта игрока (Поинт такого типа может быть только один)
     # SQL - Сохранение в SQL
     type: MEMORY
 
@@ -43,8 +44,14 @@ point:
     balanceCommand: 'balance'
     balanceAliases: []
   xp:
-    type: XP
+    type: LEVEL
     name: 'Ур. опыта'
     namePlural: 'Ур. опыта'
     color: '&a'
     symbol: 'Ур. опыта'
+  exp:
+    type: EXP
+    name: 'Оч. опыта'
+    namePlural: 'Оч. опыта'
+    color: '&a'
+    symbol: 'Оч. опыта'

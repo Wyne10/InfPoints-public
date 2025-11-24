@@ -20,7 +20,7 @@ public final class PointEventCallback extends Point {
 
     @Override
     public void add(UUID player, double amount) {
-        var event = PointEventType.ADD.call(this, this, player, amount);
+        var event = PointEventType.ADD.create(this, player, amount);
         if (!event.callEvent())
             return;
         parent.add(player, event.getAmount());
@@ -28,7 +28,7 @@ public final class PointEventCallback extends Point {
 
     @Override
     public boolean subtract(UUID player, double amount) {
-        var event = PointEventType.SUBTRACT.call(this, this, player, amount);
+        var event = PointEventType.SUBTRACT.create(this, player, amount);
         if (!event.callEvent())
             return false;
         return parent.subtract(player, event.getAmount());
@@ -36,7 +36,7 @@ public final class PointEventCallback extends Point {
 
     @Override
     public void set(UUID player, double amount) {
-        var event = PointEventType.SET.call(this, this, player, amount);
+        var event = PointEventType.SET.create(this, player, amount);
         if (!event.callEvent())
             return;
         parent.set(player, event.getAmount());

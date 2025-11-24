@@ -1,5 +1,6 @@
 package org.bigcraft.infpoints.api.event;
 
+import org.bigcraft.infpoints.api.Point;
 import org.bigcraft.infpoints.api.PointConfig;
 import org.bigcraft.infpoints.api.PointType;
 import org.bukkit.event.Cancellable;
@@ -13,17 +14,15 @@ public abstract class PointEvent extends Event implements Cancellable {
 
     private final static HandlerList HANDLER_LIST = new HandlerList();
 
-    private final PointType pointType;
-    private final PointConfig pointConfig;
+    private final Point point;
     private final UUID player;
     private double amount;
     private final PointEventType type;
     private boolean cancelled;
 
-    public PointEvent(PointType pointType, PointConfig pointConfig, UUID player, double amount, PointEventType type) {
+    public PointEvent(Point point, UUID player, double amount, PointEventType type) {
         super();
-        this.pointType = pointType;
-        this.pointConfig = pointConfig;
+        this.point = point;
         this.player = player;
         this.amount = amount;
         this.type = type;
@@ -33,12 +32,16 @@ public abstract class PointEvent extends Event implements Cancellable {
         this.amount = amount;
     }
 
+    public Point getPoint() {
+        return point;
+    }
+
     public PointType getPointType() {
-        return pointType;
+        return point;
     }
 
     public PointConfig getPointConfig() {
-        return pointConfig;
+        return point;
     }
 
     public UUID getPlayer() {
@@ -50,11 +53,16 @@ public abstract class PointEvent extends Event implements Cancellable {
     }
 
     public double getBalance() {
-        return pointType.get(player);
+        return point.get(player);
     }
 
     public double getNewBalance() {
-        return pointType.get(player) + amount;
+        if (type == PointEventType.ADD)
+            return point.get(player) + amount;
+        else if (type == PointEventType.SUBTRACT)
+            return point.get(player) - amount;
+        else
+            return amount;
     }
 
     public PointEventType getType() {

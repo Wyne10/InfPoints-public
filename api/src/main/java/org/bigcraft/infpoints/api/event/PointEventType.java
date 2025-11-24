@@ -1,7 +1,6 @@
 package org.bigcraft.infpoints.api.event;
 
-import org.bigcraft.infpoints.api.PointConfig;
-import org.bigcraft.infpoints.api.PointType;
+import org.bigcraft.infpoints.api.Point;
 
 import java.util.UUID;
 
@@ -12,7 +11,7 @@ public enum PointEventType {
 
     @FunctionalInterface
     interface PointEventFactory {
-        PointEvent create(PointType pointType, PointConfig pointConfig, UUID player, double amount, PointEventType type);
+        PointEvent create(Point point, UUID player, double amount, PointEventType type);
     }
     private final PointEventFactory factory;
 
@@ -20,7 +19,7 @@ public enum PointEventType {
         this.factory = factory;
     }
 
-    public PointEvent call(PointType pointType, PointConfig pointConfig, UUID player, double amount) {
-        return this.factory.create(pointType, pointConfig, player, amount, this);
+    public PointEvent create(Point point, UUID player, double amount) {
+        return this.factory.create(point, player, amount, this);
     }
 }

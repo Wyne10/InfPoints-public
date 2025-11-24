@@ -13,7 +13,8 @@ public class PointTypeModule extends AbstractModule {
         mapBinder.addBinding(PointTypes.MEMORY.name()).to(MemoryPointFactory.class);
         mapBinder.addBinding(PointTypes.JSON.name()).to(JsonPointFactory.class);
         mapBinder.addBinding(PointTypes.PDC.name()).to(PdcPointFactory.class);
-        mapBinder.addBinding(PointTypes.XP.name()).to(XpPointFactory.class);
+        mapBinder.addBinding(PointTypes.LEVEL.name()).to(LevelPointFactory.class);
+        mapBinder.addBinding(PointTypes.EXP.name()).to(ExpPointFactory.class);
         mapBinder.addBinding(PointTypes.SQL.name()).to(SqlPointFactory.class);
     }
 

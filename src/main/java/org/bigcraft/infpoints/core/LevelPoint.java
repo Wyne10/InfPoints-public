@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import java.util.Optional;
 import java.util.UUID;
 
-public class XpPoint extends Point {
+public class LevelPoint extends Point {
 
-    public XpPoint(ConfigurationSection config) {
+    public LevelPoint(ConfigurationSection config) {
         super(config);
     }
 

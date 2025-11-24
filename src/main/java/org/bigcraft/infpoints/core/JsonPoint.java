@@ -1,7 +1,6 @@
 package org.bigcraft.infpoints.core;
 
 import me.wyne.wutils.json.JsonRegistry;
-import me.wyne.wutils.log.Log;
 import org.bigcraft.infpoints.InfPoints;
 import org.bukkit.configuration.ConfigurationSection;
 
