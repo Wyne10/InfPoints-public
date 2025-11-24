@@ -43,6 +43,11 @@ public class InfPointsApi implements PointApi {
     }
 
     @Override
+    public @Nullable PointView getPointView(String key) {
+        return pointManager.getPointView(key);
+    }
+
+    @Override
     public @Nullable PointConfig getPointConfig(String key) {
         return pointManager.getPointConfig(key);
     }
