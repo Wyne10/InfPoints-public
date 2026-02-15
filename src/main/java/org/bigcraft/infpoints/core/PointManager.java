@@ -46,7 +46,7 @@ public class PointManager implements PointProvider, AutoCloseable {
     @Nullable
     public org.bigcraft.infpoints.api.Point getPoint(String key) {
         if (!points.containsKey(key))
-            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
+            InfPoints.getInstance().getLog().error("Point with a key '{}' does not exist", key);
         return points.get(key);
     }
 
@@ -54,7 +54,7 @@ public class PointManager implements PointProvider, AutoCloseable {
     @Nullable
     public PointType getPointType(String key) {
         if (!points.containsKey(key))
-            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
+            InfPoints.getInstance().getLog().error("Point with a key '{}' does not exist", key);
         return points.get(key);
     }
 
@@ -62,7 +62,7 @@ public class PointManager implements PointProvider, AutoCloseable {
     @Nullable
     public PointView getPointView(String key) {
         if (!points.containsKey(key))
-            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
+            InfPoints.getInstance().getLog().error("Point with a key '{}' does not exist", key);
         return points.get(key);
     }
 
@@ -70,7 +70,7 @@ public class PointManager implements PointProvider, AutoCloseable {
     @Nullable
     public PointConfig getPointConfig(String key) {
         if (!points.containsKey(key))
-            throw new IllegalArgumentException("Point with a key '" + key + "' does not exist");
+            InfPoints.getInstance().getLog().error("Point with a key '{}' does not exist", key);
         return points.get(key);
     }
 
