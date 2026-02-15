@@ -63,7 +63,7 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
     @Override
     public void add(Player player, double amount) {
         add(player.getUniqueId(), amount);
-        I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "info-balance-set",
+        I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "info-balance-add",
                 Placeholder.replace("key", config.key()),
                 Placeholder.replace("amount", visualConfig.decimalFormat().format(amount))
         ).sendMessage(player);
@@ -76,6 +76,10 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
             I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "info-balance-sub",
                     Placeholder.replace("key", config.key()),
                     Placeholder.replace("amount", visualConfig.decimalFormat().format(amount))
+            ).sendMessage(player);
+        } else {
+            I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "error-insufficient-funds",
+                    Placeholder.replace("key", config.key())
             ).sendMessage(player);
         }
         return result;
