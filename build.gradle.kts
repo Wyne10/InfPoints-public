@@ -24,6 +24,7 @@ dependencies {
     implementation(libs.hikari)
     implementation(libs.adventureMini)
     implementation(libs.adventureBukkit)
+    implementation(libs.adventurePlain)
 
     implementation(libs.wutilsConfig)
     implementation(libs.wutilsLog)
@@ -48,11 +49,11 @@ tasks {
 
     runServer {
         downloadPlugins {
-            url("https://ci.extendedclip.com/view/Plugins/job/PlaceholderAPI/197/artifact/build/libs/PlaceholderAPI-2.11.6.jar")
-            url("https://download.luckperms.net/1604/bukkit/loader/LuckPerms-Bukkit-5.5.15.jar")
+            url("https://download.luckperms.net/1624/bukkit/loader/LuckPerms-Bukkit-5.5.36.jar")
+            github("PlaceholderAPI", "PlaceholderAPI", "2.12.2", "PlaceholderAPI-2.12.2.jar")
             github("dmulloy2", "ProtocolLib", "5.4.0", "ProtocolLib.jar")
-            github("ViaVersion", "ViaVersion", "5.4.2", "ViaVersion-5.4.2.jar")
-            github("ViaVersion", "ViaBackwards", "5.4.2", "ViaBackwards-5.4.2.jar")
+            github("ViaVersion", "ViaVersion", "5.7.1", "ViaVersion-5.7.1.jar")
+            github("ViaVersion", "ViaBackwards", "5.7.1", "ViaBackwards-5.7.1.jar")
             github("CommandAPI", "CommandAPI", "9.7.0", "CommandAPI-9.7.0.jar")
         }
         minecraftVersion("1.21.3")

@@ -10,6 +10,8 @@ import me.wyne.wutils.jdbc.HikariOrmLiteConnectionPool;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.config.SqlConfig;
 
+import java.sql.SQLException;
+
 @Singleton
 @Getter
 public class ConnectionProvider {
@@ -29,8 +31,13 @@ public class ConnectionProvider {
             InfPoints.getInstance().getLog().warn("SQL connection is not configured");
             return;
         }
-        close();
-        this.connectionPool = new HikariOrmLiteConnectionPool(config.getJdbcUrl(), config.getUsername(), config.getPassword(), InfPoints.getInstance().getLog());
+        if (connectionPool != null)
+            close();
+        try {
+            this.connectionPool = new HikariOrmLiteConnectionPool(config.getJdbcUrl(), config.getUsername(), config.getPassword());
+        } catch (SQLException e) {
+            InfPoints.getInstance().getLog().error("An exception occurred trying to establish data source connection with {}", config.getJdbcUrl(), e);
+        }
     }
 
     public boolean isActive() {

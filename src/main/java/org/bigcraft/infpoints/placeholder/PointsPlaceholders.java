@@ -6,6 +6,10 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import me.wyne.wutils.common.Args;
 import me.wyne.wutils.common.placeholder.PAPIUtils;
 import me.wyne.wutils.i18n.I18n;
+import me.wyne.wutils.i18n.language.component.PlaceholderLocalizedComponent;
+import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
+import me.wyne.wutils.i18n.language.interpretation.LegacyInterpreter;
+import me.wyne.wutils.i18n.language.validation.EmptyValidator;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.core.Point;
 import org.bigcraft.infpoints.core.PointManager;
@@ -64,12 +68,28 @@ public class PointsPlaceholders extends PlaceholderExpansion {
 
         Point point = pointManager.getPoints().get(pointKey);
 
+        if (data.startsWith("name-plural"))
+            return I18n.global.accessor(player, point.getVisualConfig().pluralName())
+                    .getPlaceholderComponent(player).style("name-plural", data);
+        else if (data.startsWith("name"))
+            return I18n.global.accessor(player, point.getVisualConfig().name())
+                    .getPlaceholderComponent(player).style("name", data);
+        else if (data.startsWith("symbol"))
+            return I18n.global.accessor(player, point.getVisualConfig().symbol())
+                    .getPlaceholderComponent(player).style("symbol", data);
+        else if (data.equals("color"))
+            return point.getVisualConfig().color();
+        else if (data.startsWith("color"))
+            return new PlaceholderLocalizedComponent(
+                    ComponentInterpreters.LEGACY.get(new EmptyValidator()),
+                    I18n.global.getLanguage(I18n.toLocale(player)),
+                    point.getVisualConfig().color(),
+                    LegacyInterpreter.SERIALIZER.deserialize(point.getVisualConfig().color()),
+                    I18n.global.getAudiences(),
+                    player
+            ).style("color", data);
+
         switch (data) {
-            case "name": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().name()).get();
-            case "name-plural": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().pluralName()).get();
-            case "symbol": return I18n.global.getPlaceholderString(I18n.toLocale(player), player, point.getVisualConfig().symbol()).get();
-            case "color": return point.getVisualConfig().color();
-            case "color-mm": return point.getColorMiniMessage();
             case "balance": return point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId()));
             case "balance-format": return formatNumber(point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId())));
             case "balance-int": return String.valueOf((int) point.get(player.getUniqueId()));

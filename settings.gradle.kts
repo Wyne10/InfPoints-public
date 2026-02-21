@@ -6,6 +6,7 @@ rootProject.name = "InfPoints"
 
 dependencyResolutionManagement {
     repositories {
+        mavenLocal()
         mavenCentral()
         maven {
             url = uri("https://jitpack.io/")

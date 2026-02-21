@@ -2,6 +2,7 @@ package org.bigcraft.infpoints.command;
 
 import dev.jorel.commandapi.CommandAPIBukkit;
 import dev.jorel.commandapi.CommandAPICommand;
+import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.core.Point;
 import org.bukkit.Bukkit;
 
@@ -18,11 +19,11 @@ public class BalanceCommand extends PersonalCommand {
                 .executesPlayer((sender, args) -> {
                     StringBuilder commandBuilder = new StringBuilder();
                     commandBuilder.append("points ")
-                            .append(getPoint().getConfig().key())
-                            .append(" balance");
+                            .append("balance ")
+                            .append(getPoint().getConfig().key());
                     Bukkit.dispatchCommand(sender, commandBuilder.toString());
                 })
-                .register();
+                .register(InfPoints.getInstance());
     }
 
     @Override

@@ -6,7 +6,8 @@ import com.j256.ormlite.logger.Logger;
 import lombok.Getter;
 import me.wyne.wutils.config.Config;
 import me.wyne.wutils.i18n.I18n;
-import me.wyne.wutils.i18n.language.component.BukkitComponentAudience;
+import me.wyne.wutils.i18n.PluginI18nBuilder;
+import me.wyne.wutils.i18n.language.component.BukkitComponentAudiences;
 import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
 import me.wyne.wutils.i18n.language.validation.EmptyValidator;
 import me.wyne.wutils.jdbc.DriverLibrary;
@@ -21,6 +22,9 @@ import org.bukkit.configuration.MemoryConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.concurrent.Executors;
 
 @Singleton
@@ -65,6 +69,8 @@ public class InfPoints extends JavaPlugin {
             JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
             log.error("Guice configuration/provision exception", e);
+        } catch (IOException | IllegalAccessException e) {
+            log.error("Json load error", e);
         }
     }
 
@@ -76,6 +82,8 @@ public class InfPoints extends JavaPlugin {
             JsonRegistry.global.write();
         } catch (ConfigurationException | ProvisionException e) {
             log.error("Guice configuration/provision exception", e);
+        } catch (IOException | IllegalAccessException e) {
+            log.error("Json write error", e);
         }
     }
 
@@ -97,12 +105,11 @@ public class InfPoints extends JavaPlugin {
                 new File(getDataFolder(), "log").getPath(),
                 Log.global
         );
-        DriverLibrary.logger = log;
     }
 
     private void initializeConfig()
     {
-        Config.global.log = log;
+        Config.global.logger = log;
         Config.global.setConfigGenerator(this, "config.yml");
         Config.global.generateConfig();
         reloadConfig();
@@ -112,21 +119,22 @@ public class InfPoints extends JavaPlugin {
 
     private void initializeI18n()
     {
-        I18n.global.log = log;
-        I18n.global.audiences = new BukkitComponentAudience(BukkitAudiences.create(this));
-        I18n.global.clearLanguageMap();
-        I18n.global.loadLanguage("lang/ru.yml", this);
-        I18n.global.loadLanguage("lang/en.yml", this);
-        I18n.global.loadDefaultResourceLanguage(this);
-        I18n.global.loadLanguages(this);
-        I18n.global.setDefaultLanguage(I18n.global.getDefaultLanguageCode(this));
-        I18n.global.setComponentInterpreter(ComponentInterpreters.valueOf(getConfig().getString("serializer", "MINI_MESSAGE")).get(new EmptyValidator()));
-        I18n.global.usePlayerLanguage = getConfig().getBoolean("usePlayerLanguage", true);
+        I18n.global = new PluginI18nBuilder(this)
+                .setLogger(log)
+                .setComponentAudience(new BukkitComponentAudiences(BukkitAudiences.create(this)))
+                .setComponentInterpreter(
+                        ComponentInterpreters.valueOf(
+                                getConfig().getString("serializer", "MINI_MESSAGE")
+                        ).get(new EmptyValidator())
+                )
+                .setUsePlayerLanguage(getConfig().getBoolean("usePlayerLanguage", true))
+                .loadLanguage("lang/ru.yml")
+                .loadLanguage("lang/en.yml")
+                .build();
     }
 
     private void initializeJson()
     {
-        JsonRegistry.global.log = log;
         JsonRegistry.global.setGson(new GsonBuilder().setPrettyPrinting().create());
         JsonRegistry.global.setDirectory(getDataFolder());
     }
@@ -148,6 +156,9 @@ public class InfPoints extends JavaPlugin {
             JsonRegistry.global.load();
         } catch (ConfigurationException | ProvisionException e) {
             log.error("Guice configuration/provision exception", e);
+        } catch (SQLException | IOException | ClassNotFoundException | InvocationTargetException |
+                 IllegalAccessException | NoSuchMethodException | InstantiationException e) {
+            log.error("Reload error", e);
         }
     }
 
