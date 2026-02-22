@@ -2,9 +2,7 @@ package org.bigcraft.infpoints.core;
 
 import lombok.Getter;
 import me.wyne.wutils.i18n.I18n;
-import me.wyne.wutils.i18n.language.interpretation.LegacyInterpreter;
 import me.wyne.wutils.i18n.language.replacement.Placeholder;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bigcraft.infpoints.api.config.CommandConfig;
 import org.bigcraft.infpoints.api.config.VisualConfig;
 import org.bukkit.configuration.ConfigurationSection;
@@ -17,20 +15,17 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
 
     private final org.bigcraft.infpoints.api.config.PointConfig config;
     private final VisualConfig visualConfig;
-    private final String colorMiniMessage;
     private final CommandConfig commandConfig;
 
     public Point(ConfigurationSection config) {
         this.config = org.bigcraft.infpoints.api.config.PointConfig.fromConfig(config);
         this.visualConfig = VisualConfig.fromConfig(config);
-        this.colorMiniMessage = MiniMessage.miniMessage().serialize(LegacyInterpreter.SERIALIZER.deserialize(visualConfig.color()));
         this.commandConfig = CommandConfig.fromConfig(config);
     }
 
     protected Point(Point point) {
         this.config = point.config;
         this.visualConfig = point.visualConfig;
-        this.colorMiniMessage = point.colorMiniMessage;
         this.commandConfig = point.commandConfig;
     }
 
@@ -63,7 +58,7 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
     @Override
     public void add(Player player, double amount) {
         add(player.getUniqueId(), amount);
-        I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "info-balance-add",
+        I18n.global.accessor(player, "info-balance-add").getPlaceholderComponent(player,
                 Placeholder.replace("key", config.key()),
                 Placeholder.replace("amount", visualConfig.decimalFormat().format(amount))
         ).sendMessage(player);
@@ -73,12 +68,12 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
     public boolean subtract(Player player, double amount) {
         var result = subtract(player.getUniqueId(), amount);
         if (result) {
-            I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "info-balance-sub",
+            I18n.global.accessor(player, "info-balance-sub").getPlaceholderComponent(player,
                     Placeholder.replace("key", config.key()),
                     Placeholder.replace("amount", visualConfig.decimalFormat().format(amount))
             ).sendMessage(player);
         } else {
-            I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "error-insufficient-funds",
+            I18n.global.accessor(player, "error-insufficient-funds").getPlaceholderComponent(player,
                     Placeholder.replace("key", config.key())
             ).sendMessage(player);
         }
@@ -88,7 +83,7 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
     @Override
     public void set(Player player, double amount) {
         set(player.getUniqueId(), amount);
-        I18n.global.getPlaceholderComponent(I18n.toLocale(player), player, "info-balance-set",
+        I18n.global.accessor(player, "info-balance-set").getPlaceholderComponent(player,
                 Placeholder.replace("key", config.key()),
                 Placeholder.replace("amount", visualConfig.decimalFormat().format(amount))
         ).sendMessage(player);
@@ -98,24 +93,15 @@ public abstract class Point implements org.bigcraft.infpoints.api.Point {
     public boolean transfer(Player sender, Player receiver, double amount) {
         var result = transfer(sender.getUniqueId(), receiver.getUniqueId(), amount);
         if (result) {
-            I18n.global.getPlaceholderComponent(
-                    sender.locale(),
-                    sender,
-                    "success-point-pay",
+            I18n.global.accessor(sender, "success-point-pay").getPlaceholderComponent(sender,
                     Placeholder.replace("player-name", receiver.getName())
             ).sendMessage(sender);
-            I18n.global.getPlaceholderComponent(
-                    receiver.locale(),
-                    sender,
-                    "info-point-receive",
+            I18n.global.accessor(receiver, "info-point-receive").getPlaceholderComponent(sender,
                     Placeholder.replace("key", config.key()),
                     Placeholder.replace("amount", visualConfig.decimalFormat().format(amount))
             ).sendMessage(receiver);
         } else {
-            I18n.global.getPlaceholderComponent(
-                    sender.locale(),
-                    sender,
-                    "error-insufficient-funds",
+            I18n.global.accessor(sender, "error-insufficient-funds").getPlaceholderComponent(sender,
                     Placeholder.replace("key", config.key())
             ).sendMessage(sender);
         }

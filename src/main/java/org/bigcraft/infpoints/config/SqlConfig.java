@@ -8,6 +8,10 @@ import me.wyne.wutils.config.ConfigEntry;
 import me.wyne.wutils.jdbc.DriverLibrary;
 import org.bigcraft.infpoints.InfPoints;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
+
 @SuppressWarnings("FieldMayBeFinal")
 @Singleton
 @Getter
@@ -26,7 +30,12 @@ public class SqlConfig {
     public SqlConfig(InfPoints plugin) {
         Config.global.registerConfigObject(this);
         Config.global.loadConfig(plugin.getConfig(), this);
-        DriverLibrary.valueOf(driver).registerDriver();
+        try {
+            DriverLibrary.valueOf(driver).registerDriver();
+        } catch (IOException | ClassNotFoundException | SQLException | NoSuchMethodException |
+                 InvocationTargetException | InstantiationException | IllegalAccessException e) {
+            plugin.getLog().error("Driver registration error", e);
+        }
     }
 
     public boolean isConfigured()
