@@ -1,5 +1,5 @@
 include:
-  - project: 'NeverMined-Entertainment/CI-CD'
+  - project: 'hotmine/infrastructure/CI-CD'
     ref: master
     file: '.gitlab/workflows/master-deploy.yml'
     inputs:
