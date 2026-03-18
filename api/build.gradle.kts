@@ -14,15 +14,14 @@ dependencies {
 
 publishing {
     repositories {
-        val repoUrl = findProperty("myMavenRepoWriteUrl").toString()
-        if (repoUrl.isNotEmpty()) {
-            maven {
-                url = uri(repoUrl)
-
-                credentials {
-                    username = findProperty("myMavenRepoWriteUsername").toString()
-                    password = findProperty("myMavenRepoWritePassword").toString()
-                }
+        maven {
+            url = uri("https://git.bigteam.pw/api/v4/projects/11/packages/maven")
+            credentials(HttpHeaderCredentials::class) {
+                name = "Deploy-Token"
+                value = findProperty("gitLabPrivateToken") as String?
+            }
+            authentication {
+                create("header", HttpHeaderAuthentication::class)
             }
         }
     }
