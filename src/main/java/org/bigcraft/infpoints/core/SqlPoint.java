@@ -9,7 +9,6 @@ import org.bigcraft.infpoints.InfPoints;
 import org.bukkit.configuration.ConfigurationSection;
 
 import java.sql.SQLException;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,7 +24,7 @@ public class SqlPoint extends Point implements AutoCloseable {
     public SqlPoint(ConfigurationSection config, ConnectionSource connectionSource) {
         super(config);
         pointCache = new MemoryPoint(this);
-        executor = Executors.newCachedThreadPool();
+        executor = Executors.newSingleThreadExecutor();
         try {
             DatabaseTableConfig<PointEntity> tableConfig = DatabaseTableConfig.fromClass(connectionSource.getDatabaseType(), PointEntity.class);
             tableConfig.setTableName(getConfig().key());
@@ -48,35 +47,12 @@ public class SqlPoint extends Point implements AutoCloseable {
     public void set(UUID player, double amount) {
         pointCache.set(player, amount);
         executor.execute(() -> {
-            getEntity(player)
-                    .ifPresentOrElse(entity -> update(entity, amount),
-                            () -> create(player, amount));
+            try {
+                pointDao.createOrUpdate(new PointEntity(player, amount));
+            } catch (SQLException e) {
+                InfPoints.getInstance().getLog().error("An exception occurred while saving point entity", e);
+            }
         });
-    }
-
-    private Optional<PointEntity> getEntity(UUID uuid) {
-        try {
-            return Optional.ofNullable(pointDao.queryForId(uuid));
-        } catch (SQLException e) {
-            InfPoints.getInstance().getLog().error("An exception occurred while querying point entity", e);
-        }
-        return Optional.empty();
-    }
-
-    private void create(UUID player, double balance) {
-        try {
-            pointDao.create(new PointEntity(player, balance));
-        } catch (SQLException e) {
-            InfPoints.getInstance().getLog().error("An exception occurred while creating point entity", e);
-        }
-    }
-
-    private void update(PointEntity entity, double balance) {
-        try {
-            pointDao.update(entity.setBalance(balance));
-        } catch (SQLException e) {
-            InfPoints.getInstance().getLog().error("An exception occurred while updating point entity", e);
-        }
     }
 
     @SneakyThrows

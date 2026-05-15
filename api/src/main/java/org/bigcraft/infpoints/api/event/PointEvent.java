@@ -3,6 +3,7 @@ package org.bigcraft.infpoints.api.event;
 import org.bigcraft.infpoints.api.Point;
 import org.bigcraft.infpoints.api.PointConfig;
 import org.bigcraft.infpoints.api.PointType;
+import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -21,7 +22,7 @@ public abstract class PointEvent extends Event implements Cancellable {
     private boolean cancelled;
 
     public PointEvent(Point point, UUID player, double amount, PointEventType type) {
-        super();
+        super(!Bukkit.isPrimaryThread());
         this.point = point;
         this.player = player;
         this.amount = amount;
