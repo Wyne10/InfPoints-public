@@ -33,6 +33,14 @@ public class ExpPoint extends Point {
                 });
     }
 
+    @Override
+    public void add(UUID player, double amount) {
+        getPlayer(player)
+                .ifPresent(player1 -> {
+                    player1.giveExp((int) amount);
+                });
+    }
+
     private Optional<Player> getPlayer(UUID uuid) {
         return Optional.ofNullable(Bukkit.getPlayer(uuid));
     }
