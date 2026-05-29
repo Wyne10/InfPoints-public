@@ -24,7 +24,7 @@ public class LevelPoint extends Point {
     public void set(UUID player, double amount) {
         if (amount < 0)
             amount = 0;
-        int finalAmount = (int) amount;
+        int finalAmount = (int) Math.round(amount);
         getPlayer(player)
                 .ifPresent(player1 -> player1.setLevel(finalAmount));
     }

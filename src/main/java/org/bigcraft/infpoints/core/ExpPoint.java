@@ -24,7 +24,7 @@ public class ExpPoint extends Point {
     public void set(UUID player, double amount) {
         if (amount < 0)
             amount = 0;
-        int finalAmount = (int) amount;
+        int finalAmount = (int) Math.round(amount);
         getPlayer(player)
                 .ifPresent(player1 -> {
                     player1.setExp(0);
@@ -37,7 +37,7 @@ public class ExpPoint extends Point {
     public void add(UUID player, double amount) {
         getPlayer(player)
                 .ifPresent(player1 -> {
-                    player1.giveExp((int) amount);
+                    player1.giveExp((int) Math.round(amount));
                 });
     }
 
