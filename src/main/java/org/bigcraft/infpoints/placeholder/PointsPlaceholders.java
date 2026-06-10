@@ -92,8 +92,8 @@ public class PointsPlaceholders extends PlaceholderExpansion {
         switch (data) {
             case "balance": return point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId()));
             case "balance-format": return formatNumber(point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId())));
-            case "balance-int": return String.valueOf((int) point.get(player.getUniqueId()));
-            case "balance-int-format": return formatNumber(String.valueOf((int) point.get(player.getUniqueId())));
+            case "balance-int": return String.valueOf((long) point.get(player.getUniqueId()));
+            case "balance-int-format": return formatNumber(String.valueOf((long) point.get(player.getUniqueId())));
         }
 
         InfPoints.getInstance().getLog().error("Placeholder '{}' doesn't exist ({})", data, PAPIUtils.getPlaceholder(getIdentifier(), params));
