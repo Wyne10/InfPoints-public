@@ -99,6 +99,9 @@ bukkit {
         register("points.pay.*") {
             default = BukkitPluginDescription.Permission.Default.OP
         }
+        register("points.exchange.*") {
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
 
         register("points.admin.*") {
             children = listOf("points.admin.reload")

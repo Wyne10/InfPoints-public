@@ -14,11 +14,13 @@ import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.api.PointType;
 import org.bigcraft.infpoints.core.Point;
 import org.bigcraft.infpoints.core.PointManager;
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.UUID;
 
 @Singleton
@@ -43,6 +45,10 @@ public class InfPointsCommand {
                 .withSubcommand(crudCommand("set", "points.set", "success-point-set", "info-balance-set", PointType::set))
                 .withSubcommand(crudCommand("add", "points.add", "success-point-add", "info-balance-add", PointType::add))
                 .withSubcommand(crudCommand("sub", "points.sub", "success-point-sub", "info-balance-sub", PointType::subtract))
+                .withSubcommand(multiCrudCommand("set-many", "points.set", "success-point-set", "info-balance-set", PointType::set))
+                .withSubcommand(multiCrudCommand("add-many", "points.add", "success-point-add", "info-balance-add", PointType::add))
+                .withSubcommand(multiCrudCommand("sub-many", "points.sub", "success-point-sub", "info-balance-sub", PointType::subtract))
+                .withSubcommand(exchangeCommand())
                 .executes(InfPointsCommand::sendHelp)
                 .register(plugin);
     }
@@ -178,6 +184,66 @@ public class InfPointsCommand {
                                 Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))
                         ).sendMessage(target.getPlayer());
                 });
+    }
+
+    private CommandAPICommand multiCrudCommand(String commandName, String permission, String message, String receiverMessage, AddSetSub operation) {
+        return new CommandAPICommand(commandName)
+                .withArguments(pointKeyArgument("key"))
+                .withArguments(new EntitySelectorArgument.ManyPlayers("targets"))
+                .withArguments(new DoubleArgument("amount"))
+                .withOptionalArguments(new BooleanArgument("sender-message"))
+                .withOptionalArguments(new BooleanArgument("receiver-message"))
+                .executes((sender, args) -> {
+                    var key = args.getOrDefaultRaw("key", "");
+                    assertPointKeyExists(key, sender);
+                    assertHasPermission(sender, permission + "." + key);
+                    @SuppressWarnings("unchecked")
+                    var targets = (Collection<Player>) args.get("targets");
+                    if (targets == null || targets.isEmpty())
+                        throw CommandAPIBukkit.failWithBaseComponents(
+                                I18n.global.accessor(sender, "error-player-not-found")
+                                        .getPlaceholderComponent(sender, Placeholder.replace("name", args.getOrDefaultRaw("targets", ""))).bungee()
+                        );
+
+                    var amount = args.getByClassOrDefault("amount", Double.class, 0D);
+                    var point = pointManager.getPoints().get(key);
+                    targets.forEach(target -> {
+                        operation.execute(point, target.getUniqueId(), amount);
+
+                        if (args.getByClassOrDefault("sender-message", Boolean.class, true))
+                            I18n.global.accessor(sender, message).getPlaceholderComponent(target,
+                                    Placeholder.replace("key", key),
+                                    Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount)),
+                                    Placeholder.replace("player-name", target.getName())
+                            ).sendMessage(sender);
+
+                        if (args.getByClassOrDefault("receiver-message", Boolean.class, true) && target.isOnline())
+                            I18n.global.accessor(target, receiverMessage).getPlaceholderComponent(target,
+                                    Placeholder.replace("key", key),
+                                    Placeholder.replace("amount", point.getVisualConfig().decimalFormat().format(amount))
+                            ).sendMessage(target.getPlayer());
+                    });
+                });
+    }
+
+    private CommandAPICommand exchangeCommand() {
+         return new CommandAPICommand("exchange")
+                 .withArguments(pointKeyArgument("key"))
+                 .withArguments(CommandUtils.onlinePlayer("target"))
+                 .withArguments(new DoubleArgument("amount", 1))
+                 .withArguments(new GreedyStringArgument("execute"))
+                 .executes((sender, args) -> {
+                     var key = args.getOrDefaultRaw("key", "");
+                     assertPointKeyExists(key, sender);
+                     assertHasPermission(sender,  "points.exchange." + key);
+                     var target = args.getByClass("target", Player.class);
+                     var amount = args.getByClassOrDefault("amount", Double.class, 0D);
+                     var point = pointManager.getPoints().get(key);
+                     var command = (String) args.get("execute");
+                     if (point.subtract(target, amount)) {
+                         Bukkit.dispatchCommand(Bukkit.getConsoleSender(), I18n.global.accessor(target, command).getPlaceholderString(target).get());
+                     }
+                 });
     }
 
     @FunctionalInterface

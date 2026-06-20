@@ -28,7 +28,7 @@ import java.util.Set;
 @Singleton
 public class PointManager implements PointProvider, AutoCloseable {
 
-    private final static String[] permissions = {"points.balance.", "points.balance-other.", "points.set.", "points.add.", "points.sub.", "points.pay."};
+    private final static String[] permissions = {"points.balance.", "points.balance-other.", "points.set.", "points.add.", "points.sub.", "points.pay.", "points.exchange."};
 
     @Getter private final Map<String, Point> points = new HashMap<>();
     private final Set<PersonalCommand> personalCommands = new HashSet<>();
