@@ -2,7 +2,6 @@ package org.bigcraft.infpoints.core.factory;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import me.wyne.wutils.log.Log;
 import org.bigcraft.infpoints.InfPoints;
 import org.bigcraft.infpoints.core.MemoryPoint;
 import org.bigcraft.infpoints.core.Point;
@@ -20,14 +19,13 @@ public class SqlPointFactory implements PointFactory {
         this.connectionProvider = connectionProvider;
     }
 
-    @SuppressWarnings("DataFlowIssue")
     @Override
     public Point create(ConfigurationSection config) {
         if (!connectionProvider.isActive()) {
             InfPoints.getInstance().getLog().warn("SQL connection is not active, '{}' point will be using memory type", config.getName());
             return new MemoryPoint(config);
         }
-        return new SqlPoint(config, connectionProvider.getConnectionPool().getSource());
+        return new SqlPoint(config, connectionProvider);
     }
 
 }

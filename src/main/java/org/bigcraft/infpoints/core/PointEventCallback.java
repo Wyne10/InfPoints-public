@@ -4,7 +4,7 @@ import org.bigcraft.infpoints.api.event.PointEventType;
 
 import java.util.UUID;
 
-public final class PointEventCallback extends Point {
+public final class PointEventCallback extends Point implements AutoCloseable {
 
     private final Point parent;
 
@@ -42,4 +42,8 @@ public final class PointEventCallback extends Point {
         parent.set(player, event.getAmount());
     }
 
+    @Override
+    public void close() throws Exception {
+        if (parent instanceof AutoCloseable c) c.close();
+    }
 }
