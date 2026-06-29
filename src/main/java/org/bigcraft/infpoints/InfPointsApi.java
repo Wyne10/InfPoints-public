@@ -8,6 +8,8 @@ import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Set;
+
 @Singleton
 public class InfPointsApi implements PointApi {
 
@@ -30,6 +32,11 @@ public class InfPointsApi implements PointApi {
     @Override
     public PointProvider getPointProvider() {
         return pointManager;
+    }
+
+    @Override
+    public Set<String> getKeys() {
+        return pointManager.getKeys();
     }
 
     @Override

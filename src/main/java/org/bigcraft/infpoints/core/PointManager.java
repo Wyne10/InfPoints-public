@@ -20,10 +20,7 @@ import org.bukkit.permissions.Permission;
 import org.bukkit.plugin.ServicePriority;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Singleton
 public class PointManager implements PointProvider, AutoCloseable {
@@ -40,6 +37,11 @@ public class PointManager implements PointProvider, AutoCloseable {
     public PointManager(InfPoints plugin, Map<String, PointFactory> pointTypeMap) {
         this.plugin = plugin;
         this.pointTypeMap = pointTypeMap;
+    }
+
+    @Override
+    public Set<String> getKeys() {
+        return Set.copyOf(points.keySet());
     }
 
     @Override
