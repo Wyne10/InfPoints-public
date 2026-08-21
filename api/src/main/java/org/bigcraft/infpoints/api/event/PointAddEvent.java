@@ -4,6 +4,10 @@ import org.bigcraft.infpoints.api.Point;
 
 import java.util.UUID;
 
+/**
+ * Fired when a {@link Point}'s balance is about to increase; {@link #getType()}
+ * is always {@link PointEventType#ADD}.
+ */
 public class PointAddEvent extends PointEvent {
     public PointAddEvent(Point point, UUID player, double amount, PointEventType type) {
         super(point, player, amount, type);
