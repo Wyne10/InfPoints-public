@@ -4,7 +4,7 @@ import org.codehaus.plexus.util.Os
 plugins {
     id("java")
     alias(libs.plugins.shadow)
-    alias(libs.plugins.runPaperFork)
+    alias(libs.plugins.runPaper)
     alias(libs.plugins.pluginYml)
 }
 
@@ -47,11 +47,11 @@ tasks {
         archiveClassifier.set("")
         minimize()
         if (!isDebug) {
-            relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
-            relocate("com.google.common", "org.bigcraft.infpoints.shadow.google.common")
-            relocate("net.kyori", "org.bigcraft.infpoints.shadow.net.kyori")
-            relocate("dev.vankka", "org.bigcraft.infpoints.shadow.dev.vankka")
-            relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")
+            relocate("com.google.inject", "me.wyne.infpoints.shadow.google.guice")
+            relocate("com.google.common", "me.wyne.infpoints.shadow.google.common")
+            relocate("net.kyori", "me.wyne.infpoints.shadow.net.kyori")
+            relocate("dev.vankka", "me.wyne.infpoints.shadow.dev.vankka")
+            relocate("me.wyne.wutils", "me.wyne.infpoints.shadow.wutils")
         }
     }
 
@@ -66,9 +66,8 @@ tasks {
             github("ViaVersion", "ViaVersion", viaVersion, "ViaVersion-$viaVersion.jar")
             github("ViaVersion", "ViaBackwards", viaVersion, "ViaBackwards-$viaVersion.jar")
             github("CommandAPI", "CommandAPI", commandApiVersion, "CommandAPI-$commandApiVersion.jar")
+            github("Wyne10", "ConnectionSource-public", "2.0.0", "ConnectionSource-2.0.0.jar")
         }
-        runDirectory(layout.projectDirectory.dir("run-$minecraftVersion").asFile)
-        serverTemplates(layout.projectDirectory.dir("run-template").asFile)
         minecraftVersion(minecraftVersion)
     }
 
@@ -94,7 +93,7 @@ bukkit {
     version = getVersion().toString()
     website = findProperty("website").toString()
     author = findProperty("author").toString()
-    main = "org.bigcraft.infpoints.InfPoints"
+    main = "me.wyne.infpoints.InfPoints"
     apiVersion = "1.16"
     softDepend = listOf("PlaceholderAPI", "CommandAPI", "Vault", "ConnectionSource")
     permissions {

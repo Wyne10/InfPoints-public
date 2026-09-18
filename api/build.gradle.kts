@@ -1,6 +1,10 @@
 plugins {
-    id("java")
-    id("maven-publish")
+    id("java-library")
+    id("com.vanniktech.maven.publish") version "0.35.0"
+}
+
+dependencies {
+    compileOnly(libs.paperApi)
 }
 
 java {
@@ -8,42 +12,41 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(16))
 }
 
-dependencies {
-    compileOnly(libs.paperApi)
+tasks.named("publish") {
+    dependsOn("publishToMavenLocal")
 }
 
-publishing {
-    repositories {
-        val repoUrl = findProperty("myMavenRepoWriteUrl").toString()
-        if (repoUrl.isNotEmpty()) {
-            maven {
-                url = uri(repoUrl)
+mavenPublishing {
+    publishToMavenCentral()
+    signAllPublications()
 
-                credentials {
-                    username = findProperty("myMavenRepoWriteUsername").toString()
-                    password = findProperty("myMavenRepoWritePassword").toString()
-                }
+    coordinates(findProperty("centralGroup").toString(), "infpoints-api", version.toString())
+
+    pom {
+        name.set("InfPoints API")
+        description.set("Consumer API for the InfPoints Bukkit/Paper plugin, a point and currency system with exact fixed-point balances, a transaction ledger, and synchronous and asynchronous access.")
+        inceptionYear.set("2025")
+        url.set("https://github.com/Wyne10/InfPoints-public")
+        licenses {
+            license {
+                name.set("MIT License")
+                url.set("https://opensource.org/licenses/MIT")
+                distribution.set("https://opensource.org/licenses/MIT")
             }
         }
-        maven {
-            url = uri("https://git.bigteam.pw/api/v4/projects/11/packages/maven")
-            credentials(HttpHeaderCredentials::class) {
-                name = "Deploy-Token"
-                value = findProperty("gitLabPrivateToken") as String?
-            }
-            authentication {
-                create("header", HttpHeaderAuthentication::class)
+        developers {
+            developer {
+                id.set("Wyne10")
+                name.set("Wyne")
+                email.set("izmodenov1997@gmail.com")
+                organization.set("BigTeam")
+                organizationUrl.set("https://github.com/NeverMined-Entertainment")
             }
         }
-    }
-
-    publications {
-        create<MavenPublication>("maven") {
-            groupId = findProperty("group").toString()
-            artifactId = "InfPoints-api"
-            version = findProperty("version").toString()
-
-            from(components["java"])
+        scm {
+            url.set("https://github.com/Wyne10/InfPoints-public")
+            connection.set("scm:git:git://github.com/Wyne10/InfPoints-public.git")
+            developerConnection.set("scm:git:ssh://git@github.com/Wyne10/InfPoints-public.git")
         }
     }
 }
