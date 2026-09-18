@@ -3,30 +3,39 @@ package org.bigcraft.infpoints.placeholder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
-import me.wyne.wutils.common.Args;
-import me.wyne.wutils.common.placeholder.PAPIUtils;
+import me.wyne.wutils.config.Config;
+import me.wyne.wutils.config.ConfigEntry;
 import me.wyne.wutils.i18n.I18n;
 import me.wyne.wutils.i18n.language.component.PlaceholderLocalizedComponent;
 import me.wyne.wutils.i18n.language.interpretation.ComponentInterpreters;
 import me.wyne.wutils.i18n.language.interpretation.LegacyInterpreter;
 import me.wyne.wutils.i18n.language.validation.EmptyValidator;
 import org.bigcraft.infpoints.InfPoints;
-import org.bigcraft.infpoints.core.Point;
-import org.bigcraft.infpoints.core.PointManager;
+import org.bigcraft.infpoints.Messages;
+import org.bigcraft.infpoints.api.config.VisualConfig;
+import org.bigcraft.infpoints.point.PointHandle;
+import org.bigcraft.infpoints.point.PointManager;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.OptionalDouble;
+
+@SuppressWarnings("FieldMayBeFinal")
 @Singleton
-public class PointsPlaceholders extends PlaceholderExpansion {
+public final class PointsPlaceholders extends PlaceholderExpansion {
+
+    @ConfigEntry(section = "Placeholders", comment = "Text balance placeholders show until the balance is loaded")
+    private String loading = "...";
 
     private final InfPoints plugin;
-    private final PointManager pointManager;
+    private final PointManager points;
 
     @Inject
-    public PointsPlaceholders(InfPoints plugin, PointManager pointManager) {
+    public PointsPlaceholders(InfPoints plugin, PointManager points) {
         this.plugin = plugin;
-        this.pointManager = pointManager;
+        this.points = points;
+        Config.global.registerConfigObject(this);
         register();
     }
 
@@ -37,7 +46,7 @@ public class PointsPlaceholders extends PlaceholderExpansion {
 
     @Override
     public @NotNull String getAuthor() {
-        return "Wyne";
+        return String.join(", ", plugin.getDescription().getAuthors());
     }
 
     @Override
@@ -51,65 +60,66 @@ public class PointsPlaceholders extends PlaceholderExpansion {
     }
 
     @Override
-    public @Nullable String onRequest(OfflinePlayer player, @NotNull String params) {
-        Args args = new Args(params, "_");
-        String pointKey = args.get(0);
-        String data = args.get(1);
-
-        if (args.size() < 2) {
-            InfPoints.getInstance().getLog().error("Not enough arguments for points placeholder. Required: 2");
+    public @Nullable String onRequest(@Nullable OfflinePlayer player, @NotNull String params) {
+        PointHandle point = findPoint(params);
+        if (point == null)
             return null;
-        }
-
-        if (!pointManager.getPoints().containsKey(pointKey)) {
-            InfPoints.getInstance().getLog().error("Point '{}' doesn't exist ({})", pointKey, PAPIUtils.getPlaceholder(getIdentifier(), params));
-            return null;
-        }
-
-        Point point = pointManager.getPoints().get(pointKey);
+        String data = params.substring(point.getKey().length() + 1);
+        VisualConfig visual = point.getVisualConfig();
 
         if (data.startsWith("name-plural"))
-            return I18n.global.accessor(player, point.getVisualConfig().pluralName())
-                    .getPlaceholderComponent(player).style("name-plural", data);
-        else if (data.startsWith("name"))
-            return I18n.global.accessor(player, point.getVisualConfig().name())
-                    .getPlaceholderComponent(player).style("name", data);
-        else if (data.startsWith("symbol"))
-            return I18n.global.accessor(player, point.getVisualConfig().symbol())
-                    .getPlaceholderComponent(player).style("symbol", data);
-        else if (data.equals("color"))
-            return point.getVisualConfig().color();
-        else if (data.startsWith("color"))
+            return I18n.global.accessor(player, visual.pluralName()).getPlaceholderComponent(player).style("name-plural", data);
+        if (data.startsWith("name"))
+            return I18n.global.accessor(player, visual.name()).getPlaceholderComponent(player).style("name", data);
+        if (data.startsWith("symbol"))
+            return I18n.global.accessor(player, visual.symbol()).getPlaceholderComponent(player).style("symbol", data);
+        if (data.equals("color"))
+            return visual.color();
+        if (data.startsWith("color"))
             return new PlaceholderLocalizedComponent(
                     ComponentInterpreters.LEGACY.get(new EmptyValidator()),
                     I18n.global.getLanguage(I18n.toLocale(player)),
-                    point.getVisualConfig().color(),
-                    LegacyInterpreter.SERIALIZER.deserialize(point.getVisualConfig().color()),
+                    visual.color(),
+                    LegacyInterpreter.SERIALIZER.deserialize(visual.color()),
                     I18n.global.getAudiences(),
                     player
             ).style("color", data);
 
-        switch (data) {
-            case "balance": return point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId()));
-            case "balance-format": return formatNumber(point.getVisualConfig().decimalFormat().format(point.get(player.getUniqueId())));
-            case "balance-int": return String.valueOf((long) point.get(player.getUniqueId()));
-            case "balance-int-format": return formatNumber(String.valueOf((long) point.get(player.getUniqueId())));
-        }
-
-        InfPoints.getInstance().getLog().error("Placeholder '{}' doesn't exist ({})", data, PAPIUtils.getPlaceholder(getIdentifier(), params));
-        return null;
+        if (player == null)
+            return null;
+        OptionalDouble cached = point.getCached(player.getUniqueId());
+        if (cached.isEmpty())
+            return loading;
+        double balance = cached.getAsDouble();
+        return switch (data) {
+            case "balance" -> Messages.format(point, balance);
+            case "balance-format" -> groupThousands(Messages.format(point, balance));
+            case "balance-int" -> String.valueOf((long) balance);
+            case "balance-int-format" -> groupThousands(String.valueOf((long) balance));
+            default -> {
+                InfPoints.logger().debug("Unknown placeholder %points_{}%", params);
+                yield null;
+            }
+        };
     }
 
-    private String formatNumber(String number) {
-        boolean containsDecimal = number.contains(".");
-        StringBuilder sb = new StringBuilder(number.substring(0, containsDecimal ? number.lastIndexOf('.') : number.length()));
-        int length = sb.length();
-
-        for (int i = length - 3; i > 0; i -= 3) {
-            sb.insert(i, ",");
+    // The longest matching key wins, so keys containing '_' work
+    private @Nullable PointHandle findPoint(String params) {
+        String match = null;
+        for (String key : points.getKeys()) {
+            if (params.startsWith(key + "_") && (match == null || key.length() > match.length()))
+                match = key;
         }
+        return match == null ? null : points.getHandle(match);
+    }
 
-        return sb + (containsDecimal ? number.substring(number.lastIndexOf('.')) : "");
+    private static String groupThousands(String number) {
+        boolean containsDecimal = number.contains(".");
+        StringBuilder builder = new StringBuilder(number.substring(0, containsDecimal ? number.lastIndexOf('.') : number.length()));
+        int start = builder.length() > 0 && builder.charAt(0) == '-' ? 1 : 0;
+        for (int i = builder.length() - 3; i > start; i -= 3)
+            builder.insert(i, ",");
+        return builder + (containsDecimal ? number.substring(number.lastIndexOf('.')) : "");
     }
 
 }

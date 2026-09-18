@@ -1,15 +1,15 @@
 package org.bigcraft.infpoints.api.event;
 
 import org.bigcraft.infpoints.api.Point;
-
-import java.util.UUID;
+import org.bigcraft.infpoints.api.transaction.TransactionRequest;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired when a {@link Point}'s balance is about to decrease; {@link #getType()}
- * is always {@link PointEventType#SUBTRACT}.
+ * Fired before an amount is subtracted from a point's balance. The subtraction may still fail afterwards
+ * when the balance is insufficient.
  */
 public class PointSubtractEvent extends PointEvent {
-    public PointSubtractEvent(Point point, UUID player, double amount, PointEventType type) {
-        super(point, player, amount, type);
+    public PointSubtractEvent(@NotNull Point point, @NotNull TransactionRequest request) {
+        super(point, request);
     }
 }

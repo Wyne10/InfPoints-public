@@ -1,15 +1,14 @@
 package org.bigcraft.infpoints.api.event;
 
 import org.bigcraft.infpoints.api.Point;
-
-import java.util.UUID;
+import org.bigcraft.infpoints.api.transaction.TransactionRequest;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired when a {@link Point}'s balance is about to increase; {@link #getType()}
- * is always {@link PointEventType#ADD}.
+ * Fired before an amount is added to a point's balance.
  */
 public class PointAddEvent extends PointEvent {
-    public PointAddEvent(Point point, UUID player, double amount, PointEventType type) {
-        super(point, player, amount, type);
+    public PointAddEvent(@NotNull Point point, @NotNull TransactionRequest request) {
+        super(point, request);
     }
 }

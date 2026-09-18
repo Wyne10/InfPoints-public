@@ -1,8 +1,7 @@
 package org.bigcraft.infpoints.api.event;
 
 import org.bigcraft.infpoints.api.Point;
-import org.bigcraft.infpoints.api.PointConfig;
-import org.bigcraft.infpoints.api.PointType;
+import org.bigcraft.infpoints.api.transaction.TransactionRequest;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -12,111 +11,61 @@ import org.jetbrains.annotations.NotNull;
 import java.util.UUID;
 
 /**
- * Bukkit event fired when a {@link Point}'s balance is about to change.
+ * Fired before a point's balance changes.
  * <p>
- * The kind of change is reported by {@link #getType()}; concrete subclasses
- * {@link PointAddEvent}, {@link PointSubtractEvent} and {@link PointSetEvent}
- * exist so listeners can also filter by event class. The event is cancellable;
- * if cancelled, the balance is left unchanged. Handlers may call
- * {@link #setAmount(double)} to change how much is applied before the event
- * completes. The event is raised asynchronously when it is fired off the
- * server's primary thread.
+ * The concrete subclasses {@link PointAddEvent}, {@link PointSubtractEvent}, {@link PointSetEvent} and
+ * {@link PointTransferEvent} let listeners filter by operation. Cancelling the event leaves the balance
+ * unchanged; {@link #setAmount(double)} changes the amount that is applied. The event is asynchronous when
+ * the operation runs off the server's main thread, so check {@link #isAsynchronous()} before touching the
+ * world. Listen to {@link PointTransactionCompleteEvent} to react to changes that were actually applied.
  */
 public abstract class PointEvent extends Event implements Cancellable {
 
-    private final static HandlerList HANDLER_LIST = new HandlerList();
+    private static final HandlerList HANDLER_LIST = new HandlerList();
 
     private final Point point;
-    private final UUID player;
-    private double amount;
-    private final PointEventType type;
+    private TransactionRequest request;
     private boolean cancelled;
 
-    /**
-     * @param point  the point whose balance is changing
-     * @param player the affected player
-     * @param amount the amount being applied; see {@link #getType()} for how it is used
-     * @param type   the kind of change this event represents
-     */
-    public PointEvent(Point point, UUID player, double amount, PointEventType type) {
+    protected PointEvent(@NotNull Point point, @NotNull TransactionRequest request) {
         super(!Bukkit.isPrimaryThread());
         this.point = point;
-        this.player = player;
-        this.amount = amount;
-        this.type = type;
+        this.request = request;
     }
 
     /**
-     * Changes the amount that will be applied when this event is not cancelled.
-     * Also changes the result of {@link #getNewBalance()}.
+     * Returns the point whose balance is about to change.
      */
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
-    /**
-     * Returns the point whose balance is changing.
-     */
-    public Point getPoint() {
+    public @NotNull Point getPoint() {
         return point;
     }
 
     /**
-     * Returns the {@link PointType} view of the point whose balance is changing.
+     * Returns the request that will be applied, including amount changes made by earlier handlers.
      */
-    public PointType getPointType() {
-        return point;
+    public @NotNull TransactionRequest getRequest() {
+        return request;
     }
 
     /**
-     * Returns the {@link PointConfig} view of the point whose balance is changing.
+     * Returns the affected player, the sender for transfers.
      */
-    public PointConfig getPointConfig() {
-        return point;
+    public @NotNull UUID getPlayer() {
+        return request.player();
     }
 
     /**
-     * Returns the UUID of the affected player.
-     */
-    public UUID getPlayer() {
-        return player;
-    }
-
-    /**
-     * Returns the amount being applied, as passed to the constructor or last
-     * changed via {@link #setAmount(double)}.
+     * Returns the amount that will be applied.
      */
     public double getAmount() {
-        return amount;
+        return request.amount();
     }
 
     /**
-     * Returns the player's balance before this event is applied.
+     * Changes the amount that will be applied when this event isn't cancelled.
      */
-    public double getBalance() {
-        return point.get(player);
-    }
-
-    /**
-     * Returns what the player's balance would become if this event completes
-     * unmodified: the current balance plus {@link #getAmount()} for
-     * {@link PointEventType#ADD}, minus it for {@link PointEventType#SUBTRACT},
-     * or {@link #getAmount()} itself for {@link PointEventType#SET}.
-     */
-    public double getNewBalance() {
-        if (type == PointEventType.ADD)
-            return point.get(player) + amount;
-        else if (type == PointEventType.SUBTRACT)
-            return point.get(player) - amount;
-        else
-            return amount;
-    }
-
-    /**
-     * Returns the kind of change this event represents.
-     */
-    public PointEventType getType() {
-        return type;
+    public void setAmount(double amount) {
+        request = request.withAmount(amount);
     }
 
     @Override
@@ -132,7 +81,7 @@ public abstract class PointEvent extends Event implements Cancellable {
     /**
      * Returns the static handler list Bukkit uses to register listeners for this event type.
      */
-    public static HandlerList getHandlerList() {
+    public static @NotNull HandlerList getHandlerList() {
         return HANDLER_LIST;
     }
 

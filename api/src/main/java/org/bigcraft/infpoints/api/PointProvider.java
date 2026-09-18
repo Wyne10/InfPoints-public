@@ -1,7 +1,9 @@
 package org.bigcraft.infpoints.api;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Set;
 
 /**
@@ -10,32 +12,18 @@ import java.util.Set;
 public interface PointProvider {
 
     /**
-     * Returns the keys of all configured points.
+     * Returns the keys of all configured points, in configuration order.
      */
-    Set<String> getKeys();
+    @NotNull Set<String> getKeys();
 
     /**
-     * Returns the point registered under {@code key}, or {@code null} if no point
-     * with that key is configured.
+     * Returns the point configured under {@code key}, or {@code null} if no point with that key is configured.
      */
-    @Nullable Point getPoint(String key);
+    @Nullable Point getPoint(@NotNull String key);
 
     /**
-     * Returns the {@link PointType} view of the point registered under {@code key},
-     * or {@code null} if no point with that key is configured.
+     * Returns all configured points, in configuration order.
      */
-    @Nullable PointType getPointType(String key);
-
-    /**
-     * Returns the {@link PointView} view of the point registered under {@code key},
-     * or {@code null} if no point with that key is configured.
-     */
-    @Nullable PointView getPointView(String key);
-
-    /**
-     * Returns the {@link PointConfig} view of the point registered under {@code key},
-     * or {@code null} if no point with that key is configured.
-     */
-    @Nullable PointConfig getPointConfig(String key);
+    @NotNull Collection<Point> getPoints();
 
 }

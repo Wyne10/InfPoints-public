@@ -1,0 +1,28 @@
+# The file name is the point's key, e.g. %points_exp_balance% and /points add exp
+
+# Vanilla experience points of the player. Online players only, no transaction history.
+# Only the first point of this type is used, others are ignored.
+# Experience is always whole, so 'decimals' and 'defaultBalance' don't apply here
+type: EXP
+
+# Point name (%points_exp_name%)
+name: 'Experience'
+
+# Plural point name (%points_exp_name-plural%)
+namePlural: 'Experience'
+
+# Point color, legacy format only (%points_exp_color%)
+color: '&b'
+
+# Point symbol (%points_exp_symbol%), e.g. 'XP'
+symbol: 'XP'
+
+# Format of displayed balances
+decimalFormat: '#'
+
+# Personal commands of this point, leave them empty or remove them to disable the commands.
+# /points balance exp and /points pay exp work either way
+payCommand: ''
+payAliases: []
+balanceCommand: ''
+balanceAliases: []

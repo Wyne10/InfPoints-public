@@ -1,36 +1,70 @@
 ### Placeholders
 # Point name - %points_<key>_name%
 # Plural point name - %points_<key>_name-plural%
-# Point symbol- %points_<key>_symbol%
+# Point symbol - %points_<key>_symbol%
 # Point color - %points_<key>_color%
-# Point color mini message format - %points_<key>_color-mm%
+# Point color in MiniMessage format - %points_<key>_color-mm%
 # Balance - %points_<key>_balance%
 # Formatted balance - %points_<key>_balance-format%
 # Integer balance - %points_<key>_balance-int%
 # Formatted integer balance - %points_<key>_balance-int-format%
+#
+# PlaceholderAPI placeholders such as %player_name% and %points_<key>_balance% are resolved for the player
+# a message is about, which is the other player in messages like info-point-balance-other and info-point-receive,
+# and the reader everywhere else. They need PlaceholderAPI installed, <player-name> works without it.
 
 ### Messages
 
 ## Info
-info-point-balance: "<green>You have %points_<key>_color-mm%%points_<key>_balance%%points_<key>_symbol%"
-info-point-balance-other: "<green>Player '%player_name%' has %points_<key>_color-mm%%points_<key>_balance%%points_<key>_symbol%"
+info-point-balance: "<green>You have %points_<key>_color-mm%<balance>%points_<key>_symbol%"
+info-point-balance-other: "<green>Player '%player_name%' has %points_<key>_color-mm%<balance>%points_<key>_symbol%"
 info-balance-set: "<green>Your balance is set to %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-balance-add: "<green>Your balance has been replenished by %points_<key>_color-mm%<amount>%points_<key>_symbol%"
 info-balance-sub: "%points_<key>_color-mm%<amount>%points_<key>_symbol% <red>have been withdrawn from your balance"
-info-point-receive: "<green>Received %points_<key>_color-mm%<amount>%points_<key>_symbol% from '%player_name%'"
+info-point-receive: "<green>Received %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>from '%player_name%'"
+info-history-header: "<gold>Transactions of '%player_name%', page <page>:"
+info-history-entry: "<gray>[<id>] <dark_gray><date> <white><type> %points_<key>_color-mm%<amount> <gray>balance <white><balance> <dark_gray>(<source>) <gray><reason>"
+info-history-empty: "<gray>No transactions on this page"
+info-audit-result: "<green>Checked <checked> balances of '<key>', <mismatches> don't match their history"
+info-audit-mismatch: "<red>'<player-name>' has <balance> stored, but <ledger> in the history"
+info-delivery-duplicate: "<yellow>Delivery '<id>' to '<player-name>' was already applied, nothing changed"
 info-help:
-  - "Help"
+  - "<gold>InfPoints commands:"
+  - "<yellow>/points balance (point) [player] <gray>- show a balance"
+  - "<yellow>/points pay (point) (player) (amount) <gray>- pay another player"
+  - "<yellow>/points history (point) [player] [page] <gray>- show the transaction history"
+  - "<yellow>/points set|add|sub (point) (players) (amount) [sender-message] [receiver-message] [reason] <gray>- change balances, players can be a name, a UUID or a selector like @a"
+  - "<yellow>/points deliver (point) (player) (amount) (id) [reason] <gray>- add points at most once per delivery id"
+  - "<yellow>/points exchange (point) (player) (amount) (command) <gray>- take points and run a console command"
+  - "<yellow>/points audit (point) [player] <gray>- compare stored balances with their history"
+  - "<yellow>/points reload <gray>- reload the plugin"
 
 ## Error
 error-player-not-found: "<red>Player '<name>' not found!"
+error-player-only: "<red>Specify a player to use this command from the console!"
+error-player-offline: "<red>'%player_name%' must be online for this operation!"
+error-single-target: "<red>Specify exactly one player!"
+error-targets-failed: "<red>Couldn't change the balance of <count> players"
 error-point-not-found: "<red>Point '<key>' doesn't exist!"
+error-point-unavailable: "<red>'<key>' is unavailable right now, try again later!"
 error-insufficient-funds: "<red>Insufficient funds!"
+error-insufficient-funds-other: "<red>'%player_name%' has insufficient funds!"
+error-invalid-amount: "<red>Invalid amount!"
+error-invalid-delivery-id: "<red>A delivery id must contain 1 to <max> characters!"
 error-pay-self: "<red>Can't pay to yourself!"
 error-permissions: "<red>Not enough permissions to execute this command!"
+error-transaction-cancelled: "<red>The operation was cancelled!"
+error-transaction-failed: "<red>The operation failed, see the server log!"
+error-history-unsupported: "<red>'<key>' doesn't keep a transaction history!"
+error-audit-failed: "<red>Audit of '<key>' failed, see the server log!"
 
 ## Success
 success-plugin-reload: "<green>Plugin reloaded!"
-success-point-set: "<green>Set %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>'"
-success-point-add: "<green>Added %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>'"
-success-point-sub: "<green>Subtracted %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>from '<player-name>'"
-success-point-pay: "<green>Payed %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>'"
+success-point-set: "<green>Set %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '%player_name%'"
+success-point-add: "<green>Added %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '%player_name%'"
+success-point-sub: "<green>Subtracted %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>from '%player_name%'"
+success-point-set-many: "<green>Set %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to <count> players"
+success-point-add-many: "<green>Added %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to <count> players"
+success-point-sub-many: "<green>Subtracted %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>from <count> players"
+success-point-pay: "<green>Paid %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '%player_name%'"
+success-point-deliver: "<green>Delivered %points_<key>_color-mm%<amount>%points_<key>_symbol% <green>to '<player-name>' (<id>)"

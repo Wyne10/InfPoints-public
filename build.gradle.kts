@@ -1,10 +1,10 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
+import org.codehaus.plexus.util.Os
 
 plugins {
     id("java")
     alias(libs.plugins.shadow)
-    alias(libs.plugins.lombok)
-    alias(libs.plugins.runPaper)
+    alias(libs.plugins.runPaperFork)
     alias(libs.plugins.pluginYml)
 }
 
@@ -16,51 +16,68 @@ dependencies {
     compileOnly(libs.paperApi)
     compileOnly(libs.placeholderApi)
     compileOnly(libs.commandApi)
-    compileOnly("com.github.MilkBowl:VaultAPI:1.7")
+    compileOnly(libs.vaultApi)
+    compileOnly(libs.connectionSource)
 
     implementation(project(":api"))
     implementation(libs.guice)
-    implementation(libs.ormLiteJdbc)
-    implementation(libs.hikari)
+    implementation(libs.enhancedLegacy)
     implementation(libs.adventureMini)
     implementation(libs.adventureBukkit)
     implementation(libs.adventurePlain)
 
     implementation(libs.wutilsConfig)
-    implementation(libs.wutilsLog)
+    implementation(libs.wutilsConfigurables)
     implementation(libs.wutilsI18n)
-    implementation(libs.wutilsJdbc)
-    implementation(libs.wutilsJson)
     implementation(libs.wutilsCommon)
+
+    testImplementation(libs.paperApi)
+    testImplementation(libs.ormLiteJdbc)
+    testImplementation(libs.h2)
+    testImplementation(platform(libs.junitBom))
+    testImplementation(libs.junitJupiter)
+    testRuntimeOnly(libs.junitPlatformLauncher)
 }
 
 tasks {
+    val isDebug = findProperty("debug")?.toString()?.toBoolean() ?: false
+
     shadowJar {
         archiveBaseName.set(findProperty("name").toString())
         archiveClassifier.set("")
         minimize()
-        relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
-        relocate("com.google.common", "org.bigcraft.infpoints.shadow.google.common")
-        relocate("com.j256.ormlite", "org.bigcraft.infpoints.shadow.j256.ormlite")
-        relocate("com.zaxxer.hikari", "org.bigcraft.infpoints.shadow.zaxxer.hikari")
-        relocate("net.kyori", "org.bigcraft.infpoints.shadow.net.kyori")
-        relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")
+        if (!isDebug) {
+            relocate("com.google.inject", "org.bigcraft.infpoints.shadow.google.guice")
+            relocate("com.google.common", "org.bigcraft.infpoints.shadow.google.common")
+            relocate("net.kyori", "org.bigcraft.infpoints.shadow.net.kyori")
+            relocate("dev.vankka", "org.bigcraft.infpoints.shadow.dev.vankka")
+            relocate("me.wyne.wutils", "org.bigcraft.infpoints.shadow.wutils")
+        }
     }
 
     runServer {
+        val minecraftVersion: String = if (Os.isFamily(Os.FAMILY_WINDOWS) || isDebug) "1.19.4" else "1.16.5"
+        val viaVersion = "5.11.0"
+        val commandApiVersion = "9.4.2"
         downloadPlugins {
-            //url("https://download.luckperms.net/1624/bukkit/loader/LuckPerms-Bukkit-5.5.36.jar")
+            url("https://download.luckperms.net/1652/bukkit/loader/LuckPerms-Bukkit-5.5.65.jar")
             github("PlaceholderAPI", "PlaceholderAPI", "2.12.2", "PlaceholderAPI-2.12.2.jar")
-            github("dmulloy2", "ProtocolLib", "5.4.0", "ProtocolLib.jar")
-            github("ViaVersion", "ViaVersion", "5.7.1", "ViaVersion-5.7.1.jar")
-            github("ViaVersion", "ViaBackwards", "5.7.1", "ViaBackwards-5.7.1.jar")
-            github("CommandAPI", "CommandAPI", "9.7.0", "CommandAPI-9.7.0.jar")
+            github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
+            github("ViaVersion", "ViaVersion", viaVersion, "ViaVersion-$viaVersion.jar")
+            github("ViaVersion", "ViaBackwards", viaVersion, "ViaBackwards-$viaVersion.jar")
+            github("CommandAPI", "CommandAPI", commandApiVersion, "CommandAPI-$commandApiVersion.jar")
         }
-        minecraftVersion("1.21.3")
+        runDirectory(layout.projectDirectory.dir("run-$minecraftVersion").asFile)
+        serverTemplates(layout.projectDirectory.dir("run-template").asFile)
+        minecraftVersion(minecraftVersion)
     }
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
+    }
+
+    test {
+        useJUnitPlatform()
     }
 }
 
@@ -69,7 +86,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun::class) {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "-DPaper.IgnoreJavaVersion=true")
 }
 
 bukkit {
@@ -79,36 +96,53 @@ bukkit {
     author = findProperty("author").toString()
     main = "org.bigcraft.infpoints.InfPoints"
     apiVersion = "1.16"
-    softDepend = listOf("PlaceholderAPI", "CommandAPI", "Vault")
+    softDepend = listOf("PlaceholderAPI", "CommandAPI", "Vault", "ConnectionSource")
     permissions {
-        register("points.balance.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("points.balance-other.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("points.set.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("points.add.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("points.sub.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("points.pay.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-        register("points.exchange.*") {
-            default = BukkitPluginDescription.Permission.Default.OP
-        }
-
         register("points.admin.*") {
-            children = listOf("points.admin.reload")
+            children = listOf("points.admin.reload", "points.admin.audit")
             default = BukkitPluginDescription.Permission.Default.OP
         }
         register("points.admin.reload") {
             description = "Allows to reload plugin"
+        }
+        register("points.admin.audit") {
+            description = "Allows to compare stored balances with the transaction history"
+        }
+        register("points.balance.*") {
+            description = "Allows to view own balance of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.balance-other.*") {
+            description = "Allows to view balances of other players of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.set.*") {
+            description = "Allows to set balances of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.add.*") {
+            description = "Allows to add to and deliver balances of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.sub.*") {
+            description = "Allows to subtract from balances of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.pay.*") {
+            description = "Allows to pay other players with every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.exchange.*") {
+            description = "Allows to exchange every point for a console command"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.history.*") {
+            description = "Allows to view own transaction history of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
+        }
+        register("points.history-other.*") {
+            description = "Allows to view transaction history of other players of every point"
+            default = BukkitPluginDescription.Permission.Default.OP
         }
     }
 }

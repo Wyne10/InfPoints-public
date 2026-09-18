@@ -1,0 +1,28 @@
+# The file name is the point's key, e.g. %points_level_balance% and /points add level
+
+# Vanilla experience levels of the player. Online players only, no transaction history.
+# Only the first point of this type is used, others are ignored.
+# Levels are always whole, so 'decimals' and 'defaultBalance' don't apply here
+type: LEVEL
+
+# Point name (%points_level_name%)
+name: 'Level'
+
+# Plural point name (%points_level_name-plural%)
+namePlural: 'Levels'
+
+# Point color, legacy format only (%points_level_color%)
+color: '&a'
+
+# Point symbol (%points_level_symbol%), e.g. 'lvl'
+symbol: 'lvl'
+
+# Format of displayed balances
+decimalFormat: '#'
+
+# Personal commands of this point, leave them empty or remove them to disable the commands.
+# /points balance level and /points pay level work either way
+payCommand: ''
+payAliases: []
+balanceCommand: ''
+balanceAliases: []

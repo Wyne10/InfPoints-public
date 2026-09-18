@@ -1,15 +1,14 @@
 package org.bigcraft.infpoints.api.event;
 
 import org.bigcraft.infpoints.api.Point;
-
-import java.util.UUID;
+import org.bigcraft.infpoints.api.transaction.TransactionRequest;
+import org.jetbrains.annotations.NotNull;
 
 /**
- * Fired when a {@link Point}'s balance is about to be replaced; {@link #getType()}
- * is always {@link PointEventType#SET}.
+ * Fired before a point's balance is replaced; {@link #getAmount()} is the new balance.
  */
 public class PointSetEvent extends PointEvent {
-    public PointSetEvent(Point point, UUID player, double amount, PointEventType type) {
-        super(point, player, amount, type);
+    public PointSetEvent(@NotNull Point point, @NotNull TransactionRequest request) {
+        super(point, request);
     }
 }

@@ -2,61 +2,65 @@ package org.bigcraft.infpoints;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import org.bigcraft.infpoints.api.*;
-import org.bigcraft.infpoints.core.PointManager;
+import me.wyne.wutils.common.terminable.Terminable;
+import org.bigcraft.infpoints.api.IPApi;
+import org.bigcraft.infpoints.api.Point;
+import org.bigcraft.infpoints.api.PointApi;
+import org.bigcraft.infpoints.api.PointProvider;
+import org.bigcraft.infpoints.point.PointManager;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.ServicePriority;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.Set;
 
 @Singleton
-public class InfPointsApi implements PointApi {
+public final class InfPointsApi implements PointApi, Terminable {
 
     private final InfPoints plugin;
-    private final PointManager pointManager;
+    private final PointManager points;
 
     @Inject
-    public InfPointsApi(InfPoints plugin, PointManager pointManager) {
+    public InfPointsApi(InfPoints plugin, PointManager points) {
         this.plugin = plugin;
-        this.pointManager = pointManager;
-        plugin.getServer().getServicesManager().register(PointApi.class, this, plugin, ServicePriority.Normal);
+        this.points = points;
+        Bukkit.getServicesManager().register(PointApi.class, this, plugin, ServicePriority.Normal);
         IPApi.setInstance(this);
+        plugin.bind(this);
     }
 
     @Override
-    public JavaPlugin getPlugin() {
+    public @NotNull JavaPlugin getPlugin() {
         return plugin;
     }
 
     @Override
-    public PointProvider getPointProvider() {
-        return pointManager;
+    public @NotNull PointProvider getPointProvider() {
+        return points;
     }
 
     @Override
-    public Set<String> getKeys() {
-        return pointManager.getKeys();
+    public @NotNull Set<String> getKeys() {
+        return points.getKeys();
     }
 
     @Override
-    public @Nullable Point getPoint(String key) {
-        return pointManager.getPoint(key);
+    public @Nullable Point getPoint(@NotNull String key) {
+        return points.getPoint(key);
     }
 
     @Override
-    public @Nullable PointType getPointType(String key) {
-        return pointManager.getPointType(key);
+    public @NotNull Collection<Point> getPoints() {
+        return points.getPoints();
     }
 
     @Override
-    public @Nullable PointView getPointView(String key) {
-        return pointManager.getPointView(key);
-    }
-
-    @Override
-    public @Nullable PointConfig getPointConfig(String key) {
-        return pointManager.getPointConfig(key);
+    public void close() {
+        Bukkit.getServicesManager().unregister(PointApi.class, this);
+        IPApi.setInstance(null);
     }
 
 }

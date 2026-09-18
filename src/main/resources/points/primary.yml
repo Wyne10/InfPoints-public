@@ -1,0 +1,37 @@
+# The file name is the point's key, e.g. %points_primary_balance% and /points add primary
+
+# Required. Storage type:
+# SQL - ConnectionSource database, keeps a transaction history and is safe for several servers sharing one database
+# MEMORY - kept in memory only, balances are lost on restart
+# PDC - stored in the player's data file, online players only
+# LEVEL - vanilla experience levels, online players only (only one point of this type is used)
+# EXP - vanilla experience points, online players only (only one point of this type is used)
+type: MEMORY
+
+# Decimal places balances are exact to, amounts are rounded to them.
+# SQL points remember this value and refuse to load if it changes later
+decimals: 2
+
+# Balance of players who don't have one yet
+defaultBalance: 100
+
+# Point name (%points_<key>_name%)
+name: 'Coin'
+
+# Plural point name (%points_<key>_name-plural%)
+namePlural: 'Coins'
+
+# Point color, legacy format only (%points_<key>_color%)
+color: '&6'
+
+# Point symbol (%points_<key>_symbol%)
+symbol: '🪙'
+
+# Format of displayed balances
+decimalFormat: '#.##'
+
+# Personal commands of this point, leave them empty or remove them to disable the commands
+payCommand: 'pay'
+payAliases: []
+balanceCommand: 'balance'
+balanceAliases: []

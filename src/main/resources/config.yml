@@ -6,52 +6,5 @@ serializer: MINI_MESSAGE
 # OFF/FATAL/ERROR/WARN/INFO/DEBUG/TRACE/ALL
 logLevel: INFO
 
-implementVault: false
-vault: primary
-
-point:
-  primary:
-    # Обязательный параметр. Тип поинта. Доступные варианты:
-    # MEMORY - Сохранение в памяти (Очищается после перезагрузки плагина)
-    # JSON - Сохранение в JSON
-    # PDC - Сохранение в PersistentDataContainer игрока
-    # LEVEL - Сохранение в уровень опыта игрока (Поинт такого типа может быть только один)
-    # EXP - Сохранение в очки опыта игрока (Поинт такого типа может быть только один)
-    # SQL - Сохранение в SQL
-    type: MEMORY
-
-    # Необязательный параметр. Стартовый баланс.
-    defaultBalance: 100
-
-    # Название поинта (%points_<key>_name%)
-    name: 'Монета'
-
-    # Название поинта во множественном числе (%points_<key>_name-plural%)
-    namePlural: 'Монеты'
-
-    # Цвет поинта, только в legacy формате (%points_<key>_color%)
-    color: '&6'
-
-    # Символ поинта (%points_<key>_symbol%)
-    symbol: '🪙'
-
-    # Формат десятичных
-    decimalFormat: '#.##'
-
-    # Личные команды для этого поинта, оставьте параметры пустыми или удалите, чтобы не использовать команды
-    payCommand: 'pay'
-    payAliases: []
-    balanceCommand: 'balance'
-    balanceAliases: []
-  xp:
-    type: LEVEL
-    name: 'Ур. опыта'
-    namePlural: 'Ур. опыта'
-    color: '&a'
-    symbol: 'Ур. опыта'
-  exp:
-    type: EXP
-    name: 'Оч. опыта'
-    namePlural: 'Оч. опыта'
-    color: '&a'
-    symbol: 'Оч. опыта'
+# Points are defined one per file as plugins/InfPoints/points/<key>.yml, see points/primary.yml for every option.
+# They can also be listed in a 'point' section here, keyed the same way; a key defined in both places uses this file.

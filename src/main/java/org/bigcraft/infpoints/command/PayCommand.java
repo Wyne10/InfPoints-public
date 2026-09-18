@@ -1,43 +1,63 @@
 package org.bigcraft.infpoints.command;
 
-import dev.jorel.commandapi.CommandAPIBukkit;
-import dev.jorel.commandapi.CommandTree;
-import dev.jorel.commandapi.arguments.IntegerArgument;
-import me.wyne.wutils.common.command.CommandUtils;
-import org.bigcraft.infpoints.InfPoints;
-import org.bigcraft.infpoints.core.Point;
-import org.bukkit.Bukkit;
+import dev.jorel.commandapi.CommandAPICommand;
+import dev.jorel.commandapi.arguments.DoubleArgument;
+import dev.jorel.commandapi.exceptions.WrapperCommandSyntaxException;
+import dev.jorel.commandapi.executors.CommandArguments;
+import org.bigcraft.infpoints.Messages;
+import org.bigcraft.infpoints.api.Point;
+import org.bigcraft.infpoints.api.PointProvider;
+import org.bigcraft.infpoints.api.transaction.TransactionRequest;
+import org.bigcraft.infpoints.api.transaction.TransactionResult.Status;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-public class PayCommand extends PersonalCommand {
+import java.util.Objects;
 
-    public PayCommand(Point point) {
-        super(point);
+public final class PayCommand extends SubCommand {
+
+    private final PointProvider points;
+
+    public PayCommand(@NotNull PointProvider points) {
+        super("pay");
+        this.points = points;
     }
 
     @Override
-    public void register() {
-        new CommandTree(getPoint().getCommandConfig().payCommand())
-                .executes(InfPointsCommand::sendHelp)
-                .withAliases(getPoint().getCommandConfig().payAliases().toArray(String[]::new))
-                .then(CommandUtils.onlinePlayer("target").executes(InfPointsCommand::sendHelp)
-                        .then(new IntegerArgument("amount", 1)
-                                .executes((sender, args) -> {
-                                    StringBuilder commandBuilder = new StringBuilder();
-                                    commandBuilder.append("points ")
-                                            .append("pay ")
-                                            .append(getPoint().getConfig().key())
-                                            .append(" ")
-                                            .append(args.getRaw("target"))
-                                            .append(" ")
-                                            .append(args.getRaw("amount"));
-                                    Bukkit.dispatchCommand(sender, commandBuilder.toString());
-                                })))
-                .register(InfPoints.getInstance());
+    protected @NotNull CommandAPICommand build(@NotNull CommandAPICommand command) {
+        return command
+                .withArguments(CustomArguments.pointArgument("key", points), CustomArguments.targetsArgument("target"), new DoubleArgument("amount"))
+                .executesPlayer((player, args) -> {
+                    execute(player, CommandSupport.point(args), args);
+                });
     }
 
-    @Override
-    public void unregister() {
-        CommandAPIBukkit.unregister(getPoint().getCommandConfig().payCommand(), true, true);
+    static void execute(@NotNull Player sender, @NotNull Point point, @NotNull CommandArguments args) throws WrapperCommandSyntaxException {
+        CommandSupport.assertPermission(sender, "points.pay." + point.getKey());
+        OfflinePlayer target = CommandSupport.resolveTarget(sender, args, "target");
+        if (target.getUniqueId().equals(sender.getUniqueId()))
+            throw CommandSupport.fail(sender, "error-pay-self", Messages.key(point));
+        if (!point.supportsOfflinePlayers() && !target.isOnline())
+            throw CommandSupport.fail(sender, "error-player-offline", Messages.key(point), Messages.playerName(target));
+        double amount = (double) Objects.requireNonNull(args.get("amount"));
+        TransactionRequest request = TransactionRequest.transfer(sender.getUniqueId(), target.getUniqueId(), amount)
+                .withSource("command:pay")
+                .withActor(sender.getUniqueId());
+        CommandSupport.onMainThread(point.async().execute(request), result -> {
+            if (result.status() == Status.INSUFFICIENT_FUNDS) {
+                Messages.send(sender, "error-insufficient-funds", Messages.key(point));
+                return;
+            }
+            if (!result.isApplied()) {
+                CommandSupport.reportFailure(sender, point, result, target);
+                return;
+            }
+            Messages.sendAbout(sender, target, "success-point-pay", Messages.key(point), Messages.amount(point, result.amount()), Messages.playerName(target));
+            Player receiver = target.getPlayer();
+            if (receiver != null)
+                Messages.sendAbout(receiver, sender, "info-point-receive", Messages.key(point), Messages.amount(point, result.amount()), Messages.playerName(sender));
+        });
     }
 
 }

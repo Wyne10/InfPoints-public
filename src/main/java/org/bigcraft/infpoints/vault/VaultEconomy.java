@@ -2,29 +2,40 @@ package org.bigcraft.infpoints.vault;
 
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
-import org.bigcraft.infpoints.core.Point;
+import org.bigcraft.infpoints.Messages;
+import org.bigcraft.infpoints.api.Point;
+import org.bigcraft.infpoints.api.transaction.TransactionRequest;
+import org.bigcraft.infpoints.api.transaction.TransactionResult;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
-public class VaultEconomy implements Economy {
+@SuppressWarnings("deprecation")
+public final class VaultEconomy implements Economy {
 
-    private final Point point;
+    private static final String NO_BANKS = "InfPoints doesn't support banks";
 
-    public VaultEconomy(Point point) {
+    private final Supplier<@Nullable Point> point;
+
+    VaultEconomy(Supplier<@Nullable Point> point) {
         this.point = point;
     }
 
     @Override
     public boolean isEnabled() {
-        return true;
+        Point current = point.get();
+        return current != null && current.isAvailable();
     }
 
     @Override
     public String getName() {
-        return point.getConfig().key();
+        return "InfPoints";
     }
 
     @Override
@@ -34,52 +45,58 @@ public class VaultEconomy implements Economy {
 
     @Override
     public int fractionalDigits() {
-        return -1;
+        Point current = point.get();
+        return current == null ? -1 : current.getConfig().decimals();
     }
 
     @Override
     public String format(double amount) {
-        return String.valueOf(point.getVisualConfig().decimalFormat().format(amount));
+        Point current = point.get();
+        return current == null ? String.valueOf(amount) : Messages.format(current, amount);
     }
 
     @Override
     public String currencyNamePlural() {
-        return point.getVisualConfig().pluralName();
+        Point current = point.get();
+        return current == null ? "" : current.getVisualConfig().pluralName();
     }
 
     @Override
     public String currencyNameSingular() {
-        return point.getVisualConfig().name();
+        Point current = point.get();
+        return current == null ? "" : current.getVisualConfig().name();
     }
 
     @Override
     public boolean hasAccount(String playerName) {
-        return true;
+        return hasAccount(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Override
     public boolean hasAccount(OfflinePlayer player) {
-        return true;
+        Point current = point.get();
+        return current != null && (current.supportsOfflinePlayers() || player.isOnline());
     }
 
     @Override
     public boolean hasAccount(String playerName, String worldName) {
-        return true;
+        return hasAccount(playerName);
     }
 
     @Override
     public boolean hasAccount(OfflinePlayer player, String worldName) {
-        return true;
+        return hasAccount(player);
     }
 
     @Override
     public double getBalance(String playerName) {
-        return point.get(Bukkit.getOfflinePlayer(playerName).getUniqueId());
+        return getBalance(Bukkit.getOfflinePlayer(playerName));
     }
 
     @Override
     public double getBalance(OfflinePlayer player) {
-        return point.get(player.getUniqueId());
+        Point current = point.get();
+        return current == null ? 0 : current.get(player.getUniqueId());
     }
 
     @Override
@@ -119,16 +136,12 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
-        boolean result = point.subtract(player.getUniqueId(), (int) amount);
-        if (result)
-            return new EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null);
-        else
-            return new EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
+        return change(player, amount, TransactionRequest::subtract, "Cannot withdraw negative funds");
     }
 
     @Override
     public EconomyResponse withdrawPlayer(String playerName, String worldName, double amount) {
-        return withdrawPlayer(Bukkit.getOfflinePlayer(playerName), amount);
+        return withdrawPlayer(playerName, amount);
     }
 
     @Override
@@ -143,13 +156,12 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
-        point.add(player.getUniqueId(), (int) amount);
-        return new EconomyResponse(amount, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null);
+        return change(player, amount, TransactionRequest::add, "Cannot deposit negative funds");
     }
 
     @Override
     public EconomyResponse depositPlayer(String playerName, String worldName, double amount) {
-        return depositPlayer(Bukkit.getOfflinePlayer(playerName), amount);
+        return depositPlayer(playerName, amount);
     }
 
     @Override
@@ -159,57 +171,57 @@ public class VaultEconomy implements Economy {
 
     @Override
     public EconomyResponse createBank(String name, String player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse createBank(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse deleteBank(String name) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse bankBalance(String name) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse bankHas(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse bankWithdraw(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse bankDeposit(String name, double amount) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, String playerName) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse isBankOwner(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse isBankMember(String name, String playerName) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
     public EconomyResponse isBankMember(String name, OfflinePlayer player) {
-        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, "Not implemented");
+        return new EconomyResponse(0, 0, EconomyResponse.ResponseType.NOT_IMPLEMENTED, NO_BANKS);
     }
 
     @Override
@@ -235,6 +247,32 @@ public class VaultEconomy implements Economy {
     @Override
     public boolean createPlayerAccount(OfflinePlayer player, String worldName) {
         return true;
+    }
+
+    private EconomyResponse change(OfflinePlayer player, double amount, BiFunction<UUID, Double, TransactionRequest> request, String negativeMessage) {
+        Point current = point.get();
+        if (current == null)
+            return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Economy is unavailable");
+        if (!Double.isFinite(amount))
+            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.FAILURE, "Invalid amount");
+        if (amount < 0)
+            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.FAILURE, negativeMessage);
+        if (amount == 0)
+            return new EconomyResponse(0, getBalance(player), EconomyResponse.ResponseType.SUCCESS, null);
+        TransactionResult result = current.execute(request.apply(player.getUniqueId(), amount));
+        double balance = Double.isNaN(result.balance()) || result.status() == TransactionResult.Status.DUPLICATE
+                ? current.get(player.getUniqueId())
+                : result.balance();
+        if (result.isApplied())
+            return new EconomyResponse(result.amount(), balance, EconomyResponse.ResponseType.SUCCESS, null);
+        return new EconomyResponse(0, balance, EconomyResponse.ResponseType.FAILURE, switch (result.status()) {
+            case INSUFFICIENT_FUNDS -> "Insufficient funds";
+            case INVALID_AMOUNT -> "Amount is smaller than the currency allows";
+            case PLAYER_OFFLINE -> "Player must be online";
+            case CANCELLED -> "Transaction was cancelled";
+            case UNAVAILABLE -> "Economy is unavailable";
+            default -> "Transaction failed";
+        });
     }
 
 }
