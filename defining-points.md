@@ -49,13 +49,13 @@ The personal commands are shortcuts: `/pay Steve 10` does the same as `/points p
 
 ## Storage types
 
-| Type     | Balances live in                          | History | Offline players |
-| -------- | ----------------------------------------- | ------- | --------------- |
-| `SQL`    | The database provided by ConnectionSource | Yes     | Yes             |
-| `MEMORY` | Server memory                             | No      | Yes             |
-| `PDC`    | The player's data file                    | No      | No              |
-| `LEVEL`  | The player's vanilla experience level     | No      | No              |
-| `EXP`    | The player's vanilla experience points    | No      | No              |
+| Type     | Balances live in                          | History | Idempotency   | Offline players |
+| -------- | ----------------------------------------- | ------- | ------------- | --------------- |
+| `SQL`    | The database provided by ConnectionSource | Yes     | Yes           | Yes             |
+| `MEMORY` | Server memory                             | No      | Until restart | Yes             |
+| `PDC`    | The player's data file                    | No      | No            | No              |
+| `LEVEL`  | The player's vanilla experience level     | No      | No            | No              |
+| `EXP`    | The player's vanilla experience points    | No      | No            | No              |
 
 * **`SQL`** is the one to use for anything players earn, buy, or would miss. It requires [ConnectionSource](https://github.com/Wyne10/ConnectionSource-public) 2.0.0 to be installed and configured; without it the point loads as unavailable and every operation on it fails.
 * **`MEMORY`** keeps balances until the server stops. They survive `/points reload` as long as the point's type and decimals don't change. Useful for event scores and tests.
@@ -63,6 +63,8 @@ The personal commands are shortcuts: `/pay Steve 10` does the same as `/points p
 * **`LEVEL`** and **`EXP`** make vanilla experience a point, so other plugins can charge levels through the same API. Balances are always whole numbers, and `decimals` and `defaultBalance` are ignored. Only the first point of each type is used. Vanilla experience changes—killing mobs, enchanting—fire the same point events as any other change, so listeners can cancel or change them.
 
 An operation on an offline player for `PDC`, `LEVEL` or `EXP` fails with `PLAYER_OFFLINE` rather than doing nothing.
+
+The **Idempotency** column is what a point reports through `supportsIdempotency()`, and it decides how the point handles an [idempotency key](using-it-from-your-plugin.md#with-a-reason-and-an-idempotency-key): a point that reports `No` refuses a required key and ignores a best-effort one.
 
 ## Decimals
 

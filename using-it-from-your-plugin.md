@@ -115,14 +115,20 @@ coins.async().execute(request).thenAccept(result -> {
 });
 ```
 
-| Method                       | Stored in the history as                                                                                   |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `withReason(String)`         | Why the change happened.                                                                                   |
-| `withSource(String)`         | What made it. Defaults to your plugin's name.                                                              |
-| `withActor(UUID)`            | The player who caused it, when that isn't the player whose balance changes—an admin, say.                  |
-| `withIdempotencyKey(String)` | A key of up to 128 characters. A second request with the same key changes nothing and returns `DUPLICATE`. |
+| Method                                 | Stored in the history as                                                                                                            |
+| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `withReason(String)`                   | Why the change happened.                                                                                                            |
+| `withSource(String)`                   | What made it. Defaults to your plugin's name.                                                                                       |
+| `withActor(UUID)`                      | The player who caused it, when that isn't the player whose balance changes—an admin, say.                                           |
+| `withIdempotencyKey(String)`           | A key of up to 128 characters the point **must** honor. A second request with the same key changes nothing and returns `DUPLICATE`. |
+| `withBestEffortIdempotencyKey(String)` | The same key, honored **where the point can**. On a point that can't, the request still applies, without the guarantee.             |
 
-An idempotency key makes a request safe to retry. If a web store's delivery times out and you can't tell whether it went through, send the same request again. `SQL` points keep the keys in the database, so they hold across restarts; `MEMORY` points remember them until the server stops. On `PDC`, `LEVEL` and `EXP` points a request with a key fails.
+An idempotency key makes a request safe to retry. If a web store's delivery times out and you can't tell whether it went through, send the same request again. `SQL` points keep the keys in the database, so they hold across restarts; `MEMORY` points remember them until the server stops.
+
+Not every point can dedupe. `supportsIdempotency()` tells you which do, and `PDC`, `LEVEL` and `EXP` points report `false`—see [Storage types](defining-points.md#storage-types). Which of the two methods you used decides what happens on one of those:
+
+* `withIdempotencyKey` **requires** the guarantee. On a point that can't honor it the request fails with `FAILED` and nothing is applied, so a caller that genuinely needs at-most-once gets an error instead of a silent downgrade.
+* `withBestEffortIdempotencyKey` **prefers** it. The key is used where the point supports it and ignored where it doesn't, and the request applies either way. Reach for this one when the key guards against your own retries rather than being a requirement, and you'd rather the call keep working whatever storage type an admin configured.
 
 `execute` returns a `TransactionResult`: its `status()`, the `amount()` actually applied after rounding, the `balance()` after the change, and the `transactions()` it recorded.
 
@@ -137,7 +143,7 @@ An idempotency key makes a request safe to retry. If a web store's delivery time
 | `UNAVAILABLE`        | The point is removed, or its database can't be reached.                          |
 | `FAILED`             | Something else went wrong; the server log has the details.                       |
 
-`isApplied()` is `true` for `SUCCESS` and `DUPLICATE`.
+`isApplied()` is `true` for `SUCCESS` and `DUPLICATE`. Read `DUPLICATE` as "already applied", not "applied just now"—the side effect may have happened on an earlier attempt.
 
 ## Reading the history
 
