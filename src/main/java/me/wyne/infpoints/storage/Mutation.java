@@ -9,9 +9,9 @@ import java.util.UUID;
 public record Mutation(@NotNull TransactionRequest.Operation operation, @NotNull UUID player, @Nullable UUID receiver, long units,
                        @Nullable String reason, @Nullable String source, @Nullable UUID actor, @Nullable String idempotencyKey) {
 
-    public static @NotNull Mutation of(@NotNull TransactionRequest request, long units) {
+    public static @NotNull Mutation of(@NotNull TransactionRequest request, long units, @Nullable String idempotencyKey) {
         return new Mutation(request.operation(), request.player(), request.receiver(), units,
-                request.reason(), request.source(), request.actor(), request.idempotencyKey());
+                request.reason(), request.source(), request.actor(), idempotencyKey);
     }
 
     // The receiving side of a transfer is recorded without the key, which belongs to the sender side

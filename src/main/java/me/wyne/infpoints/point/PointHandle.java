@@ -101,6 +101,11 @@ public final class PointHandle implements Point {
     }
 
     @Override
+    public boolean supportsIdempotency() {
+        return state.storage().supportsIdempotency();
+    }
+
+    @Override
     public boolean supportsOfflinePlayers() {
         return state.storage().supportsOfflinePlayers();
     }
@@ -278,10 +283,8 @@ public final class PointHandle implements Point {
             return failure(Status.INVALID_AMOUNT, request);
         if (!storage.supportsOfflinePlayers() && (!isOnline(request.player()) || (request.receiver() != null && !isOnline(request.receiver()))))
             return failure(Status.PLAYER_OFFLINE, request);
-        if (request.idempotencyKey() != null && !storage.supportsIdempotency()) {
-            InfPoints.logger().error("Point '{}' can't apply requests with an idempotency key, {} was not applied", key, request);
-            return failure(Status.FAILED, request);
-        }
+        if (requiresMissingIdempotency(request, storage))
+            return refuseIdempotency(request);
 
         PointEvent event = createEvent(request);
         if (!event.callEvent())
@@ -289,8 +292,10 @@ public final class PointHandle implements Point {
         TransactionRequest effective = event.getRequest();
         if (isInvalidAmount(effective, definition))
             return failure(Status.INVALID_AMOUNT, effective);
+        if (requiresMissingIdempotency(effective, storage))
+            return refuseIdempotency(effective);
 
-        Mutation mutation = Mutation.of(effective, definition.toUnits(effective.amount()));
+        Mutation mutation = Mutation.of(effective, definition.toUnits(effective.amount()), idempotencyKey(effective, storage));
         StorageResult stored;
         try {
             stored = storage.apply(definition, mutation);
@@ -413,6 +418,19 @@ public final class PointHandle implements Point {
             return;
         lastUnavailableWarning = now;
         InfPoints.logger().warn("Point '{}' is unavailable, {} was not applied: {}", key, request, reason);
+    }
+
+    private static boolean requiresMissingIdempotency(TransactionRequest request, PointStorage storage) {
+        return request.idempotencyKey() != null && request.requireIdempotency() && !storage.supportsIdempotency();
+    }
+
+    private TransactionResult refuseIdempotency(TransactionRequest request) {
+        InfPoints.logger().error("Point '{}' can't apply requests with a required idempotency key, {} was not applied", key, request);
+        return failure(Status.FAILED, request);
+    }
+
+    private static @Nullable String idempotencyKey(TransactionRequest request, PointStorage storage) {
+        return storage.supportsIdempotency() ? request.idempotencyKey() : null;
     }
 
     private static boolean isInvalidAmount(TransactionRequest request, PointDefinition definition) {

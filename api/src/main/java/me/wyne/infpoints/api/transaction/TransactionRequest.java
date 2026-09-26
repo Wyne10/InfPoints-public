@@ -23,10 +23,12 @@ import java.util.UUID;
  * @param actor          the player who initiated the change, e.g. the sender of a command
  * @param idempotencyKey key making the request apply at most once; a repeated request with the same key
  *                       returns the original transaction with {@link TransactionResult.Status#DUPLICATE}
+ * @param requireIdempotency whether the key must be honoured, see {@link #withIdempotencyKey} and
+ *                           {@link #withBestEffortIdempotencyKey}
  */
 public record TransactionRequest(@NotNull Operation operation, @NotNull UUID player, @Nullable UUID receiver,
                                  double amount, @Nullable String reason, @Nullable String source,
-                                 @Nullable UUID actor, @Nullable String idempotencyKey) {
+                                 @Nullable UUID actor, @Nullable String idempotencyKey, boolean requireIdempotency) {
 
     /**
      * Maximum length of an {@linkplain #idempotencyKey() idempotency key}.
@@ -60,6 +62,17 @@ public record TransactionRequest(@NotNull Operation operation, @NotNull UUID pla
             throw new IllegalArgumentException("Idempotency key must contain 1 to " + MAX_IDEMPOTENCY_KEY_LENGTH + " characters");
     }
 
+    /**
+     * Creates a request whose idempotency key, if any, is required.
+     *
+     * @throws IllegalArgumentException as the {@linkplain #TransactionRequest canonical constructor} does
+     */
+    public TransactionRequest(@NotNull Operation operation, @NotNull UUID player, @Nullable UUID receiver,
+                              double amount, @Nullable String reason, @Nullable String source,
+                              @Nullable UUID actor, @Nullable String idempotencyKey) {
+        this(operation, player, receiver, amount, reason, source, actor, idempotencyKey, true);
+    }
+
     public static @NotNull TransactionRequest add(@NotNull UUID player, double amount) {
         return new TransactionRequest(Operation.ADD, player, null, amount, null, null, null, null);
     }
@@ -77,23 +90,37 @@ public record TransactionRequest(@NotNull Operation operation, @NotNull UUID pla
     }
 
     public @NotNull TransactionRequest withAmount(double amount) {
-        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey);
+        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey, requireIdempotency);
     }
 
     public @NotNull TransactionRequest withReason(@Nullable String reason) {
-        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey);
+        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey, requireIdempotency);
     }
 
     public @NotNull TransactionRequest withSource(@Nullable String source) {
-        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey);
+        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey, requireIdempotency);
     }
 
     public @NotNull TransactionRequest withActor(@Nullable UUID actor) {
-        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey);
+        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey, requireIdempotency);
     }
 
+    /**
+     * Attaches a key the point must honour: a request carrying one fails with
+     * {@link TransactionResult.Status#FAILED} when the point doesn't
+     * {@linkplain me.wyne.infpoints.api.Point#supportsIdempotency() support idempotency}.
+     */
     public @NotNull TransactionRequest withIdempotencyKey(@Nullable String idempotencyKey) {
-        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey);
+        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey, true);
+    }
+
+    /**
+     * Attaches a key the point honours where it can: a request carrying one still applies, without the
+     * at-most-once guarantee, when the point doesn't
+     * {@linkplain me.wyne.infpoints.api.Point#supportsIdempotency() support idempotency}.
+     */
+    public @NotNull TransactionRequest withBestEffortIdempotencyKey(@Nullable String idempotencyKey) {
+        return new TransactionRequest(operation, player, receiver, amount, reason, source, actor, idempotencyKey, false);
     }
 
 }

@@ -56,6 +56,17 @@ public interface Point {
     boolean supportsHistory();
 
     /**
+     * Returns whether this point applies requests carrying an
+     * {@linkplain TransactionRequest#idempotencyKey() idempotency key} at most once.
+     * <p>
+     * A {@linkplain TransactionRequest#withIdempotencyKey(String) required} key fails with
+     * {@link TransactionResult.Status#FAILED} on a point that returns {@code false} here, while a
+     * {@linkplain TransactionRequest#withBestEffortIdempotencyKey(String) best-effort} key is ignored and the
+     * request applies without the guarantee.
+     */
+    boolean supportsIdempotency();
+
+    /**
      * Returns whether balances of offline players can be read and changed. Operations on offline players of a
      * point that doesn't support them fail with {@link TransactionResult.Status#PLAYER_OFFLINE}.
      */
